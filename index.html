@@ -895,7 +895,8 @@ tbody td{padding:10px 12px;vertical-align:middle}
 <!-- ═══════════════════ SCRIPT ═══════════════════ -->
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────
-let SCRIPT_URL = localStorage.getItem('scriptUrl') || '';
+const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzyCg7SCc4yCD5l7W0STx_FOnwlqnr6oSMD9xtBpH8oFt9o4S7KGuByzimIoPuQElU/exec';
+let SCRIPT_URL = localStorage.getItem('scriptUrl') || DEFAULT_SCRIPT_URL;
 let currentUser = null;
 let allOrders = [], allDeliveries = [], allProducts = [], allCustomers = [];
 let allImports = [], allExpenses = [], allSO = [], allSuppliers = [];
@@ -921,8 +922,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Page date
   document.getElementById('pageDate').textContent = new Date().toLocaleDateString('vi-VN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   // Load script URL
-  const url = localStorage.getItem('scriptUrl');
-  if (url) document.getElementById('appsScriptUrl').value = url;
+  const url = localStorage.getItem('scriptUrl') || DEFAULT_SCRIPT_URL;
+  document.getElementById('appsScriptUrl').value = url;
 });
 
 function saveScriptUrl() {
@@ -938,14 +939,8 @@ async function doLogin() {
   document.getElementById('loginErr').textContent = '';
   if (!email || !pw) { document.getElementById('loginErr').textContent = 'Vui lòng nhập đầy đủ thông tin'; return; }
 
-  if (!SCRIPT_URL) {
-    // Demo mode
-    currentUser = { id: 'NV001', name: 'Admin - Demo', role: 'Admin' };
-    localStorage.setItem('nttt_user', JSON.stringify(currentUser));
-    showApp();
-    loadDashboard();
-    return;
-  }
+  // Luôn dùng URL mặc định nếu chưa lưu
+  if (!SCRIPT_URL) SCRIPT_URL = DEFAULT_SCRIPT_URL;
   try {
     const res = await api('GET', { action: 'login', email, password: pw });
     if (res.success) {
