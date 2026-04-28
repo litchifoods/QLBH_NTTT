@@ -590,6 +590,8 @@ tbody td{padding:10px 12px;vertical-align:middle}
             <div class="form-group"><label>Apps Script URL</label><input id="appsScriptUrl" placeholder="https://script.google.com/macros/s/..."></div>
           </div>
           <button class="btn btn-primary" onclick="saveScriptUrl()">💾 Lưu URL Apps Script</button>
+          <button class="btn btn-outline" style="margin-left:8px" onclick="testConnection()">🔌 Test kết nối</button>
+          <div id="testResult" style="margin-top:10px;font-size:13px;font-weight:600"></div>
         </div></div>
       </div>
     </div><!-- /content -->
@@ -950,7 +952,10 @@ async function doLogin() {
     } else {
       document.getElementById('loginErr').textContent = res.error || 'Đăng nhập thất bại';
     }
-  } catch { document.getElementById('loginErr').textContent = 'Không kết nối được Apps Script'; }
+  } catch(err) {
+    console.error('Login error:', err);
+    document.getElementById('loginErr').textContent = 'Lỗi kết nối: ' + (err.message || err.toString());
+  }
 }
 
 function doLogout() {
@@ -991,13 +996,28 @@ function navTo(page) {
 // ─── API ───────────────────────────────────────────────────────
 async function api(method, params) {
   if (!SCRIPT_URL) return getMockData(params);
-  if (method === 'GET') {
-    const qs = new URLSearchParams(params).toString();
-    const r = await fetch(`${SCRIPT_URL}?${qs}`);
-    return r.json();
-  } else {
-    const r = await fetch(SCRIPT_URL, { method:'POST', body: JSON.stringify(params) });
-    return r.json();
+  try {
+    let r;
+    if (method === 'GET') {
+      const qs = new URLSearchParams(params).toString();
+      r = await fetch(`${SCRIPT_URL}?${qs}`, { redirect: 'follow' });
+    } else {
+      r = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(params),
+        redirect: 'follow'
+      });
+    }
+    const text = await r.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      console.error('Response không phải JSON:', text.substring(0, 300));
+      throw new Error('Apps Script trả về dữ liệu không hợp lệ. Kiểm tra lại Code.gs');
+    }
+  } catch(err) {
+    console.error('API error:', err);
+    throw err;
   }
 }
 
@@ -1858,3 +1878,26 @@ function searchCustomerAuto() { /* auto-fill from customer DB */ }
 </script>
 </body>
 </html>
+
+<script>
+// ─── TEST KẾT NỐI (bổ sung) ────────────────────────────────────
+async function testConnection() {
+  const el = document.getElementById('testResult');
+  if (!el) return;
+  el.style.color = 'var(--gray-600)';
+  el.textContent = '⏳ Đang kiểm tra kết nối...';
+  try {
+    const res = await api('GET', { action: 'ping' });
+    if (res && res.ok) {
+      el.style.color = 'var(--green)';
+      el.textContent = '✅ ' + res.message;
+    } else {
+      el.style.color = 'var(--red)';
+      el.textContent = '❌ Lỗi: ' + JSON.stringify(res);
+    }
+  } catch(err) {
+    el.style.color = 'var(--red)';
+    el.textContent = '❌ ' + (err.message || err.toString());
+  }
+}
+</script>
