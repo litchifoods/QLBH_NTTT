@@ -100,7 +100,7 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--gray-100);color:va
 .card-body{padding:20px}
 
 /* ── KPI CARDS ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 .kpi-card{background:var(--white);border-radius:var(--radius);padding:18px 20px;border:1px solid var(--gray-200);box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
 .kpi-card::after{content:'';position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;opacity:0.07}
 .kpi-card.blue::after{background:var(--blue)}
@@ -338,23 +338,95 @@ tbody td{padding:10px 12px;vertical-align:middle}
     <div class="content">
       <!-- DASHBOARD -->
       <div id="page-dashboard" class="tab-content active">
+        <!-- KPI ROW 1 -->
         <div class="kpi-grid" id="kpiGrid">
-          <div class="kpi-card blue"><div class="kpi-icon blue">💰</div><div><div class="kpi-label">Doanh thu hôm nay</div><div class="kpi-value" id="kpi-today">--</div></div></div>
-          <div class="kpi-card gold"><div class="kpi-icon gold">📅</div><div><div class="kpi-label">Doanh thu tháng này</div><div class="kpi-value" id="kpi-month">--</div></div></div>
-          <div class="kpi-card green"><div class="kpi-icon green">🚚</div><div><div class="kpi-label">Cần giao hôm nay</div><div class="kpi-value" id="kpi-delivery">--</div><div class="kpi-sub" id="kpi-late"></div></div></div>
-          <div class="kpi-card red"><div class="kpi-icon red">💳</div><div><div class="kpi-label">Tổng công nợ KH</div><div class="kpi-value" id="kpi-debt">--</div></div></div>
+          <div class="kpi-card blue" style="cursor:pointer" onclick="navTo('orders')">
+            <div class="kpi-icon blue">💰</div>
+            <div style="flex:1">
+              <div class="kpi-label">Doanh thu hôm nay</div>
+              <div class="kpi-value" id="kpi-today">--</div>
+              <div class="kpi-sub" style="color:var(--blue);margin-top:4px;font-size:11px">Xem tất cả →</div>
+            </div>
+          </div>
+          <div class="kpi-card gold" style="cursor:pointer" onclick="navTo('orders')">
+            <div class="kpi-icon gold">📅</div>
+            <div style="flex:1">
+              <div class="kpi-label">Doanh thu tháng này</div>
+              <div class="kpi-value" id="kpi-month">--</div>
+              <div class="kpi-sub" style="color:var(--gold);margin-top:4px;font-size:11px">Xem tất cả →</div>
+            </div>
+          </div>
+          <div class="kpi-card green" style="cursor:pointer" onclick="navTo('delivery')">
+            <div class="kpi-icon green">🚚</div>
+            <div style="flex:1">
+              <div class="kpi-label">Cần giao hôm nay</div>
+              <div class="kpi-value" id="kpi-delivery">--</div>
+              <div class="kpi-sub" id="kpi-late"></div>
+              <div class="kpi-sub" style="color:var(--green);margin-top:4px;font-size:11px">Xem tất cả →</div>
+            </div>
+          </div>
+          <div class="kpi-card" style="cursor:pointer;border-left:4px solid #F59E0B" onclick="showDetailPanel('chuanBiGiao')">
+            <div class="kpi-icon" style="background:#FEF3C7">📦</div>
+            <div style="flex:1">
+              <div class="kpi-label">Chuẩn bị giao hàng</div>
+              <div class="kpi-value" id="kpi-chuanbigiao" style="color:#D97706">--</div>
+              <div class="kpi-sub" style="color:#D97706;margin-top:4px;font-size:11px">Xem tất cả →</div>
+            </div>
+          </div>
+          <div class="kpi-card" style="cursor:pointer;border-left:4px solid #8B5CF6" onclick="showDetailPanel('choHangNCC')">
+            <div class="kpi-icon" style="background:#EDE9FE">🏭</div>
+            <div style="flex:1">
+              <div class="kpi-label">Chờ hàng từ NCC</div>
+              <div class="kpi-value" id="kpi-ncc" style="color:#7C3AED">--</div>
+              <div class="kpi-sub" style="color:#7C3AED;margin-top:4px;font-size:11px">Xem tất cả →</div>
+            </div>
+          </div>
+          <div class="kpi-card red" style="cursor:pointer" onclick="showDetailPanel('congNo')">
+            <div class="kpi-icon red">💳</div>
+            <div style="flex:1">
+              <div class="kpi-label">Tổng công nợ KH</div>
+              <div class="kpi-value" id="kpi-debt">--</div>
+              <div class="kpi-sub" style="color:var(--red);margin-top:4px;font-size:11px">Xem tất cả →</div>
+            </div>
+          </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+        <!-- PANELS ROW -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
           <div class="card">
-            <div class="card-header"><h4>📋 Đơn hàng mới nhất</h4><button class="btn btn-ghost btn-sm" onclick="navTo('orders')">Xem tất cả →</button></div>
+            <div class="card-header">
+              <h4>📋 Đơn hàng mới nhất</h4>
+              <button class="btn btn-ghost btn-sm" onclick="navTo('orders')">Xem tất cả →</button>
+            </div>
             <div id="recentOrders" style="padding:0 4px"></div>
           </div>
           <div class="card">
-            <div class="card-header"><h4>🚚 Cần giao hôm nay</h4><button class="btn btn-ghost btn-sm" onclick="navTo('delivery')">Xem tất cả →</button></div>
+            <div class="card-header">
+              <h4>🚚 Cần giao hôm nay</h4>
+              <button class="btn btn-ghost btn-sm" onclick="navTo('delivery')">Xem tất cả →</button>
+            </div>
             <div id="todayDelivery" style="padding:0 4px"></div>
           </div>
         </div>
-        <div id="alertsArea" style="margin-top:16px"></div>
+
+        <!-- ALERTS -->
+        <div id="alertsArea" style="margin-top:4px"></div>
+      </div>
+
+      <!-- PANEL POPUP: Chi tiết Xem tất cả -->
+      <div class="modal-overlay" id="detailPanelModal">
+        <div class="modal modal-lg">
+          <div class="modal-header">
+            <h3 id="detailPanelTitle">Chi tiết</h3>
+            <button class="modal-close" onclick="closeModal('detailPanelModal')">✕</button>
+          </div>
+          <div class="modal-body" style="max-height:70vh;overflow-y:auto">
+            <div id="detailPanelContent"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('detailPanelModal')">Đóng</button>
+          </div>
+        </div>
       </div>
 
       <!-- ĐƠN HÀNG -->
@@ -1032,25 +1104,37 @@ function getMockData(params) {
 }
 
 // ─── DASHBOARD ─────────────────────────────────────────────────
+let _dashData = null; // cache để dùng cho detail panels
+
 async function loadDashboard() {
   try {
     const res = await api('GET', { action:'getDashboard' });
     if (!res.success) return;
+    _dashData = res;
     const k = res.kpi;
+
+    // KPI cards
     document.getElementById('kpi-today').textContent = fVND(k.doanhThuHomNay);
     document.getElementById('kpi-month').textContent = fVND(k.doanhThuThang);
-    document.getElementById('kpi-delivery').textContent = k.soCanGiaoHomNay + ' đơn';
+    document.getElementById('kpi-delivery').textContent = (k.soCanGiaoHomNay||0) + ' đơn';
     document.getElementById('kpi-debt').textContent = fVND(k.tongCongNo);
-    if (k.soDonTreHan > 0) document.getElementById('kpi-late').textContent = `⚠️ ${k.soDonTreHan} đơn trễ hạn`;
+    document.getElementById('kpi-chuanbigiao').textContent = (k.soChuanBiGiao||0) + ' đơn';
+    document.getElementById('kpi-ncc').textContent = (k.soHangNccSapVe||0) + ' SP';
+    if (k.soDonTreHan > 0) {
+      document.getElementById('kpi-late').innerHTML = `<span style="color:var(--red);font-size:11px">⚠️ ${k.soDonTreHan} đơn trễ hạn</span>`;
+    }
 
-    // Badges
-    if (k.soCanGiaoHomNay > 0) { document.getElementById('badge-delivery').textContent = k.soCanGiaoHomNay; document.getElementById('badge-delivery').style.display=''; }
+    // Sidebar badge
+    if (k.soCanGiaoHomNay > 0) {
+      document.getElementById('badge-delivery').textContent = k.soCanGiaoHomNay;
+      document.getElementById('badge-delivery').style.display = '';
+    }
 
     // Recent orders
     const recentEl = document.getElementById('recentOrders');
     if (res.donMoiNhat?.length) {
       recentEl.innerHTML = res.donMoiNhat.map(r => `
-        <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--gray-100);gap:10px">
+        <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--gray-100);gap:10px;cursor:pointer" onclick="navTo('orders')">
           <span style="font-weight:700;color:var(--blue);font-size:13px;min-width:55px">${r['Mã ĐH']}</span>
           <span style="flex:1;font-size:13px">${r['Tên Khách Hàng']}</span>
           <span style="font-weight:700;color:var(--navy);font-size:13px">${fVND(r['Thực Thu'])}</span>
@@ -1062,19 +1146,120 @@ async function loadDashboard() {
     const todayEl = document.getElementById('todayDelivery');
     if (res.canGiaoHomNay?.length) {
       todayEl.innerHTML = res.canGiaoHomNay.map(r => `
-        <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--gray-100);gap:10px">
+        <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--gray-100);gap:10px;cursor:pointer" onclick="navTo('delivery')">
           <span style="font-weight:700;color:var(--blue);font-size:13px;min-width:55px">${r['Mã GH']||r['Mã ĐH']}</span>
           <span style="flex:1;font-size:13px">${r['Tên KH']}</span>
           <span style="font-size:12px;color:var(--gray-400)">${r['Hình Thức']||''}</span>
+          <span style="font-size:11px;font-weight:600;color:var(--green)">Hôm nay</span>
         </div>`).join('');
     } else { todayEl.innerHTML = '<div class="empty-state" style="padding:24px"><div class="emoji" style="font-size:28px">✅</div><p style="font-size:12px">Không có lịch giao hôm nay</p></div>'; }
 
-    // Alerts
+    // ── ALERTS ──────────────────────────────────────────────────
     const alerts = [];
-    if (k.soDonTreHan > 0) alerts.push(`<div class="alert alert-red">⚠️ Có <strong>${k.soDonTreHan}</strong> đơn hàng đã quá ngày giao hàng! Cần xử lý ngay.</div>`);
-    if (k.soHangNccSapVe > 0) alerts.push(`<div class="alert alert-warning">📦 Có <strong>${k.soHangNccSapVe}</strong> đơn đặt NCC đang chờ hàng về. Kiểm tra tiến độ.</div>`);
+    if (k.soDonTreHan > 0)
+      alerts.push(`<div class="alert alert-red">⚠️ Có <strong>${k.soDonTreHan}</strong> đơn hàng đã <strong>quá ngày giao</strong>! Cần xử lý ngay. <a href="#" onclick="navTo('orders')" style="color:var(--red);font-weight:700">Xem ngay →</a></div>`);
+    if (k.soDonSapGiao > 0)
+      alerts.push(`<div class="alert alert-warning">🔔 Có <strong>${k.soDonSapGiao}</strong> đơn sắp đến <strong>hạn giao hàng</strong> (trong 2 ngày tới). Chuẩn bị hàng! <a href="#" onclick="showDetailPanel('chuanBiGiao')" style="color:#92400E;font-weight:700">Xem đơn →</a></div>`);
+    if (k.soChuanBiGiao > 0)
+      alerts.push(`<div class="alert alert-blue">📦 Có <strong>${k.soChuanBiGiao}</strong> đơn hàng <strong>chưa giao</strong> cho khách. <a href="#" onclick="showDetailPanel('chuanBiGiao')" style="color:#1e40af;font-weight:700">Xem chi tiết →</a></div>`);
+    if (k.soHangNccSapVe > 0)
+      alerts.push(`<div class="alert alert-warning">🏭 Có <strong>${k.soHangNccSapVe}</strong> sản phẩm đặt NCC đang <strong>chờ hàng về</strong>. <a href="#" onclick="showDetailPanel('choHangNCC')" style="color:#92400E;font-weight:700">Xem chi tiết →</a></div>`);
     document.getElementById('alertsArea').innerHTML = alerts.join('');
-  } catch(e) { console.error(e); }
+  } catch(e) { console.error('Dashboard error:', e); }
+}
+
+// ── DETAIL PANEL: Xem tất cả ─────────────────────────────────
+function showDetailPanel(type) {
+  const titles = {
+    chuanBiGiao: '📦 Chuẩn bị giao hàng — Tất cả đơn chưa giao (gần nhất lên đầu)',
+    choHangNCC:  '🏭 Chờ hàng từ NCC — Sắp xếp theo ngày hẹn gần nhất',
+    congNo:      '💳 Công nợ khách hàng'
+  };
+  document.getElementById('detailPanelTitle').textContent = titles[type] || 'Chi tiết';
+  if (type === 'congNo') { navTo('customers'); return; }
+
+  let html = '';
+  if (!_dashData) {
+    html = '<p style="text-align:center;padding:32px;color:var(--gray-400)">Đang tải dữ liệu...</p>';
+  } else if (type === 'chuanBiGiao') {
+    const data = _dashData.donChuaGiao || [];
+    if (!data.length) { html = '<div class="empty-state"><div class="emoji">✅</div><p>Tất cả đơn hàng đã giao!</p></div>'; }
+    else {
+      const today = new Date();
+      html = `<p style="font-size:12px;color:var(--gray-400);margin-bottom:12px">Sắp xếp theo ngày giao gần nhất. 🔴 = hôm nay/trễ hạn, 🔔 = trong 2 ngày tới</p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:var(--navy);color:#fff">
+          <th style="padding:9px 12px;text-align:left">Mã ĐH</th>
+          <th style="padding:9px 12px;text-align:left">Khách hàng</th>
+          <th style="padding:9px 12px;text-align:left">Ngày giao HH</th>
+          <th style="padding:9px 12px;text-align:right">Thực thu</th>
+          <th style="padding:9px 12px;text-align:right">Còn nợ</th>
+          <th style="padding:9px 12px;text-align:left">Trạng thái</th>
+          <th style="padding:9px 12px;text-align:left">NV</th>
+        </tr></thead>
+        <tbody>${data.map((r,i) => {
+          const p = String(r['Ngày Giao HH']||'').split('/');
+          const ngayGiao = p.length===3 ? new Date(p[2],p[1]-1,p[0]) : null;
+          const diff = ngayGiao ? Math.ceil((ngayGiao-today)/(86400000)) : null;
+          let ngayLabel = r['Ngày Giao HH']||'--';
+          if (diff!==null) {
+            if (diff<0) ngayLabel=`<span style="color:var(--red);font-weight:700">⚠️ ${r['Ngày Giao HH']} (trễ ${Math.abs(diff)}n)</span>`;
+            else if (diff===0) ngayLabel=`<span style="color:var(--red);font-weight:700">🔴 Hôm nay!</span>`;
+            else if (diff<=2) ngayLabel=`<span style="color:#D97706;font-weight:700">🔔 ${r['Ngày Giao HH']} (còn ${diff}n)</span>`;
+          }
+          return `<tr style="background:${i%2?'var(--gray-50)':'#fff'};border-bottom:1px solid var(--gray-100)">
+            <td style="padding:9px 12px;font-weight:700;color:var(--blue)">${r['Mã ĐH']}</td>
+            <td style="padding:9px 12px"><div style="font-weight:600">${r['Tên Khách Hàng']}</div><div style="font-size:11px;color:var(--gray-400)">${r['SĐT']||''}</div></td>
+            <td style="padding:9px 12px">${ngayLabel}</td>
+            <td style="padding:9px 12px;text-align:right;font-weight:700">${fVND(r['Thực Thu'])}</td>
+            <td style="padding:9px 12px;text-align:right">${parseFloat(r['Công Nợ'])>0?`<span style="color:var(--red);font-weight:700">${fVND(r['Công Nợ'])}</span>`:'<span style="color:var(--green)">0đ</span>'}</td>
+            <td style="padding:9px 12px">${statusBadge(r['Trạng Thái'])}</td>
+            <td style="padding:9px 12px;font-size:12px">${r['Nhân Viên']||''}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+    }
+  } else if (type === 'choHangNCC') {
+    const data = _dashData.datNccChuaVe || [];
+    if (!data.length) { html = '<div class="empty-state"><div class="emoji">✅</div><p>Không có đơn đặt NCC nào đang chờ!</p></div>'; }
+    else {
+      const today = new Date();
+      html = `<p style="font-size:12px;color:var(--gray-400);margin-bottom:12px">Sắp xếp theo ngày hẹn hàng về gần nhất. 🔴 = quá hạn, 🔔 = trong 3 ngày tới</p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:var(--navy);color:#fff">
+          <th style="padding:9px 12px;text-align:left">Mã</th>
+          <th style="padding:9px 12px;text-align:left">Liên kết ĐH</th>
+          <th style="padding:9px 12px;text-align:left">Nhà CC</th>
+          <th style="padding:9px 12px;text-align:left">Sản phẩm</th>
+          <th style="padding:9px 12px;text-align:center">SL</th>
+          <th style="padding:9px 12px;text-align:left">Ngày hẹn về</th>
+          <th style="padding:9px 12px;text-align:left">KH chờ</th>
+        </tr></thead>
+        <tbody>${data.map((r,i) => {
+          const p = String(r['Ngày Hẹn Về']||'').split('/');
+          const ngayHen = p.length===3 ? new Date(p[2],p[1]-1,p[0]) : null;
+          const diff = ngayHen ? Math.ceil((ngayHen-today)/(86400000)) : null;
+          let ngayLabel = r['Ngày Hẹn Về']||'<span style="color:var(--gray-400)">Chưa hẹn</span>';
+          if (diff!==null) {
+            if (diff<0) ngayLabel=`<span style="color:var(--red);font-weight:700">⚠️ ${r['Ngày Hẹn Về']} (quá ${Math.abs(diff)}n)</span>`;
+            else if (diff===0) ngayLabel=`<span style="color:var(--red);font-weight:700">🔴 Hôm nay!</span>`;
+            else if (diff<=3) ngayLabel=`<span style="color:#D97706;font-weight:700">🔔 ${r['Ngày Hẹn Về']} (còn ${diff}n)</span>`;
+          }
+          return `<tr style="background:${i%2?'var(--gray-50)':'#fff'};border-bottom:1px solid var(--gray-100)">
+            <td style="padding:9px 12px;font-weight:700;color:#7C3AED">${r['Mã ĐH NCC']}</td>
+            <td style="padding:9px 12px;color:var(--blue);font-weight:600">${r['Mã ĐH KH']||'--'}</td>
+            <td style="padding:9px 12px;font-weight:500">${r['Nhà CC']}</td>
+            <td style="padding:9px 12px">${r['Sản Phẩm']}</td>
+            <td style="padding:9px 12px;text-align:center;font-weight:700">${r['SL']}</td>
+            <td style="padding:9px 12px">${ngayLabel}</td>
+            <td style="padding:9px 12px;font-size:12px;color:var(--blue)">${r['Tên KH']||'--'}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+    }
+  }
+  document.getElementById('detailPanelContent').innerHTML = html;
+  openModal('detailPanelModal');
 }
 
 // ─── ORDERS ────────────────────────────────────────────────────
