@@ -100,7 +100,7 @@ body{font-family:'Be Vietnam Pro',sans-serif;background:var(--gray-100);color:va
 .card-body{padding:20px}
 
 /* ── KPI CARDS ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
 .kpi-card{background:var(--white);border-radius:var(--radius);padding:18px 20px;border:1px solid var(--gray-200);box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
 .kpi-card::after{content:'';position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;opacity:0.07}
 .kpi-card.blue::after{background:var(--blue)}
@@ -338,95 +338,23 @@ tbody td{padding:10px 12px;vertical-align:middle}
     <div class="content">
       <!-- DASHBOARD -->
       <div id="page-dashboard" class="tab-content active">
-        <!-- KPI ROW 1 -->
         <div class="kpi-grid" id="kpiGrid">
-          <div class="kpi-card blue" style="cursor:pointer" onclick="navTo('orders')">
-            <div class="kpi-icon blue">💰</div>
-            <div style="flex:1">
-              <div class="kpi-label">Doanh thu hôm nay</div>
-              <div class="kpi-value" id="kpi-today">--</div>
-              <div class="kpi-sub" style="color:var(--blue);margin-top:4px;font-size:11px">Xem tất cả →</div>
-            </div>
-          </div>
-          <div class="kpi-card gold" style="cursor:pointer" onclick="navTo('orders')">
-            <div class="kpi-icon gold">📅</div>
-            <div style="flex:1">
-              <div class="kpi-label">Doanh thu tháng này</div>
-              <div class="kpi-value" id="kpi-month">--</div>
-              <div class="kpi-sub" style="color:var(--gold);margin-top:4px;font-size:11px">Xem tất cả →</div>
-            </div>
-          </div>
-          <div class="kpi-card green" style="cursor:pointer" onclick="navTo('delivery')">
-            <div class="kpi-icon green">🚚</div>
-            <div style="flex:1">
-              <div class="kpi-label">Cần giao hôm nay</div>
-              <div class="kpi-value" id="kpi-delivery">--</div>
-              <div class="kpi-sub" id="kpi-late"></div>
-              <div class="kpi-sub" style="color:var(--green);margin-top:4px;font-size:11px">Xem tất cả →</div>
-            </div>
-          </div>
-          <div class="kpi-card" style="cursor:pointer;border-left:4px solid #F59E0B" onclick="showDetailPanel('chuanBiGiao')">
-            <div class="kpi-icon" style="background:#FEF3C7">📦</div>
-            <div style="flex:1">
-              <div class="kpi-label">Chuẩn bị giao hàng</div>
-              <div class="kpi-value" id="kpi-chuanbigiao" style="color:#D97706">--</div>
-              <div class="kpi-sub" style="color:#D97706;margin-top:4px;font-size:11px">Xem tất cả →</div>
-            </div>
-          </div>
-          <div class="kpi-card" style="cursor:pointer;border-left:4px solid #8B5CF6" onclick="showDetailPanel('choHangNCC')">
-            <div class="kpi-icon" style="background:#EDE9FE">🏭</div>
-            <div style="flex:1">
-              <div class="kpi-label">Chờ hàng từ NCC</div>
-              <div class="kpi-value" id="kpi-ncc" style="color:#7C3AED">--</div>
-              <div class="kpi-sub" style="color:#7C3AED;margin-top:4px;font-size:11px">Xem tất cả →</div>
-            </div>
-          </div>
-          <div class="kpi-card red" style="cursor:pointer" onclick="showDetailPanel('congNo')">
-            <div class="kpi-icon red">💳</div>
-            <div style="flex:1">
-              <div class="kpi-label">Tổng công nợ KH</div>
-              <div class="kpi-value" id="kpi-debt">--</div>
-              <div class="kpi-sub" style="color:var(--red);margin-top:4px;font-size:11px">Xem tất cả →</div>
-            </div>
-          </div>
+          <div class="kpi-card blue"><div class="kpi-icon blue">💰</div><div><div class="kpi-label">Doanh thu hôm nay</div><div class="kpi-value" id="kpi-today">--</div></div></div>
+          <div class="kpi-card gold"><div class="kpi-icon gold">📅</div><div><div class="kpi-label">Doanh thu tháng này</div><div class="kpi-value" id="kpi-month">--</div></div></div>
+          <div class="kpi-card green"><div class="kpi-icon green">🚚</div><div><div class="kpi-label">Cần giao hôm nay</div><div class="kpi-value" id="kpi-delivery">--</div><div class="kpi-sub" id="kpi-late"></div></div></div>
+          <div class="kpi-card red"><div class="kpi-icon red">💳</div><div><div class="kpi-label">Tổng công nợ KH</div><div class="kpi-value" id="kpi-debt">--</div></div></div>
         </div>
-
-        <!-- PANELS ROW -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
           <div class="card">
-            <div class="card-header">
-              <h4>📋 Đơn hàng mới nhất</h4>
-              <button class="btn btn-ghost btn-sm" onclick="navTo('orders')">Xem tất cả →</button>
-            </div>
+            <div class="card-header"><h4>📋 Đơn hàng mới nhất</h4><button class="btn btn-ghost btn-sm" onclick="navTo('orders')">Xem tất cả →</button></div>
             <div id="recentOrders" style="padding:0 4px"></div>
           </div>
           <div class="card">
-            <div class="card-header">
-              <h4>🚚 Cần giao hôm nay</h4>
-              <button class="btn btn-ghost btn-sm" onclick="navTo('delivery')">Xem tất cả →</button>
-            </div>
+            <div class="card-header"><h4>🚚 Cần giao hôm nay</h4><button class="btn btn-ghost btn-sm" onclick="navTo('delivery')">Xem tất cả →</button></div>
             <div id="todayDelivery" style="padding:0 4px"></div>
           </div>
         </div>
-
-        <!-- ALERTS -->
-        <div id="alertsArea" style="margin-top:4px"></div>
-      </div>
-
-      <!-- PANEL POPUP: Chi tiết Xem tất cả -->
-      <div class="modal-overlay" id="detailPanelModal">
-        <div class="modal modal-lg">
-          <div class="modal-header">
-            <h3 id="detailPanelTitle">Chi tiết</h3>
-            <button class="modal-close" onclick="closeModal('detailPanelModal')">✕</button>
-          </div>
-          <div class="modal-body" style="max-height:70vh;overflow-y:auto">
-            <div id="detailPanelContent"></div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-ghost" onclick="closeModal('detailPanelModal')">Đóng</button>
-          </div>
-        </div>
+        <div id="alertsArea" style="margin-top:16px"></div>
       </div>
 
       <!-- ĐƠN HÀNG -->
@@ -435,10 +363,9 @@ tbody td{padding:10px 12px;vertical-align:middle}
           <div class="search-wrap"><span class="search-icon">🔍</span><input id="orderSearch" placeholder="Tìm mã ĐH, khách hàng, nhân viên..." oninput="filterOrders()"></div>
           <select id="orderStatus" onchange="filterOrders()">
             <option value="all">Tất cả trạng thái</option>
-            <option value="Mới">🔵 Mới</option>
-            <option value="Đang xử lý">🟡 Đang xử lý</option>
+            <option value="Chưa giao">⬜ Chưa giao</option>
+            <option value="Đã giao 1 phần">🟡 Đã giao 1 phần</option>
             <option value="Hoàn thành">🟢 Hoàn thành</option>
-            <option value="Hủy">🔴 Hủy</option>
           </select>
           <input type="date" id="orderFrom" onchange="filterOrders()">
           <span style="color:var(--gray-400);font-size:12px">đến</span>
@@ -708,13 +635,21 @@ tbody td{padding:10px 12px;vertical-align:middle}
     </div>
     <div class="modal-body" style="max-height:75vh;overflow-y:auto">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <!-- Cột trái: Thông tin + Sản phẩm -->
+        <!-- Cột trái -->
         <div>
           <div class="form-section">
             <div class="form-section-title">👤 Thông tin khách hàng</div>
             <div class="form-grid">
-              <div class="form-group"><label>Tên khách hàng *</label><input id="o-tenKH" placeholder="Họ tên khách hàng" oninput="searchCustomerAuto()"></div>
-              <div class="form-group"><label>Số điện thoại *</label><input id="o-sdt" placeholder="0912345678" oninput="searchCustomerAuto()"></div>
+              <div class="form-group" style="position:relative">
+                <label>Tên khách hàng *</label>
+                <input id="o-tenKH" placeholder="Tìm KH cũ hoặc nhập tên mới..." autocomplete="off" oninput="searchKHByName(this.value)">
+                <div id="kh-suggest-name" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--blue);border-radius:0 0 8px 8px;z-index:999;max-height:180px;overflow-y:auto;box-shadow:var(--shadow)"></div>
+              </div>
+              <div class="form-group" style="position:relative">
+                <label>Số điện thoại *</label>
+                <input id="o-sdt" placeholder="0912345678" autocomplete="off" oninput="searchKHBySdt(this.value)">
+                <div id="kh-suggest-sdt" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--blue);border-radius:0 0 8px 8px;z-index:999;max-height:180px;overflow-y:auto;box-shadow:var(--shadow)"></div>
+              </div>
               <div class="form-group span-2"><label>Địa chỉ giao hàng</label><input id="o-diaChi" placeholder="Số nhà, đường, quận/huyện, tỉnh/thành"></div>
             </div>
           </div>
@@ -722,15 +657,15 @@ tbody td{padding:10px 12px;vertical-align:middle}
             <div class="form-section-title">📅 Thông tin giao hàng</div>
             <div class="form-grid">
               <div class="form-group">
-                <label>Ngày giao hàng *</label>
-                <input type="date" id="o-ngayGiao">
-              </div>
-              <div class="form-group">
-                <label>Loại giao</label>
-                <select id="o-loaiGiao">
-                  <option value="today">🟢 Giao ngay hôm nay</option>
-                  <option value="schedule">🟡 Hẹn ngày giao</option>
+                <label>Loại giao *</label>
+                <select id="o-loaiGiao" onchange="toggleLoaiGiao()">
+                  <option value="henngay">📅 Hẹn ngày giao</option>
+                  <option value="tumanghang">🚶 Tự mang hàng về</option>
                 </select>
+              </div>
+              <div class="form-group" id="o-ngayGiaoWrap">
+                <label>Ngày & Giờ giao hàng *</label>
+                <input type="datetime-local" id="o-ngayGiao">
               </div>
               <div class="form-group"><label>Nhân viên *</label>
                 <select id="o-nhanVien">
@@ -763,19 +698,22 @@ tbody td{padding:10px 12px;vertical-align:middle}
             </div>
             <div class="summary-row total"><span>THỰC THU</span><span id="s-final" class="text-blue">0đ</span></div>
             <div class="divider"></div>
-            <div class="summary-row">
-              <span>Đã thanh toán</span>
+            <div class="summary-row" style="font-weight:700;color:var(--navy)"><span>Đã thanh toán</span><span id="s-paid-total" style="color:var(--green)">0đ</span></div>
+            <div class="summary-row" style="font-size:12px;padding:3px 0">
+              <span style="color:var(--gray-600)">— Tiền mặt</span>
               <div class="flex items-center gap-4">
-                <input type="number" id="s-paid" value="0" min="0" style="width:110px;padding:4px 8px;border:1px solid var(--gray-200);border-radius:5px;font-size:13px;text-align:right" oninput="recalcOrder()">
-                <span style="color:var(--gray-400);font-size:12px">đ</span>
+                <input type="number" id="s-tienmat" value="0" min="0" style="width:100px;padding:3px 8px;border:1px solid var(--gray-200);border-radius:5px;font-size:12px;text-align:right" oninput="recalcOrder()">
+                <span style="color:var(--gray-400);font-size:11px">đ</span>
+              </div>
+            </div>
+            <div class="summary-row" style="font-size:12px;padding:3px 0">
+              <span style="color:var(--gray-600)">— Chuyển khoản</span>
+              <div class="flex items-center gap-4">
+                <input type="number" id="s-ck" value="0" min="0" style="width:100px;padding:3px 8px;border:1px solid var(--gray-200);border-radius:5px;font-size:12px;text-align:right" oninput="recalcOrder()">
+                <span style="color:var(--gray-400);font-size:11px">đ</span>
               </div>
             </div>
             <div class="summary-row debt"><span>⚠️ Công nợ còn lại</span><span id="s-debt" class="fw-800">0đ</span></div>
-          </div>
-          <div style="margin-top:12px">
-            <div class="form-group"><label>Hình thức thanh toán</label>
-              <select id="o-htTT"><option>Tiền mặt</option><option>Chuyển khoản</option><option>Tiền mặt + Chuyển khoản</option></select>
-            </div>
           </div>
           <div id="orderQRBox" style="display:none;margin-top:12px;text-align:center">
             <p style="font-size:12px;color:var(--gray-400);margin-bottom:8px">QR Thanh toán</p>
@@ -788,6 +726,21 @@ tbody td{padding:10px 12px;vertical-align:middle}
       <button class="btn btn-ghost" onclick="closeModal('orderModal')">Hủy</button>
       <button class="btn btn-outline" onclick="saveOrder(false)">💾 Lưu đơn</button>
       <button class="btn btn-primary" onclick="saveOrder(true)">🖨️ Lưu & In hóa đơn</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Chi tiết đơn hàng -->
+<div class="modal-overlay" id="orderDetailModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 id="orderDetailTitle">Chi tiết đơn hàng</h3>
+      <button class="modal-close" onclick="closeModal('orderDetailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="orderDetailContent" style="max-height:70vh;overflow-y:auto"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('orderDetailModal')">Đóng</button>
+      <button class="btn btn-outline" onclick="printInvoiceFromDetail()">🖨️ In hóa đơn</button>
     </div>
   </div>
 </div>
@@ -1104,37 +1057,25 @@ function getMockData(params) {
 }
 
 // ─── DASHBOARD ─────────────────────────────────────────────────
-let _dashData = null; // cache để dùng cho detail panels
-
 async function loadDashboard() {
   try {
     const res = await api('GET', { action:'getDashboard' });
     if (!res.success) return;
-    _dashData = res;
     const k = res.kpi;
-
-    // KPI cards
     document.getElementById('kpi-today').textContent = fVND(k.doanhThuHomNay);
     document.getElementById('kpi-month').textContent = fVND(k.doanhThuThang);
-    document.getElementById('kpi-delivery').textContent = (k.soCanGiaoHomNay||0) + ' đơn';
+    document.getElementById('kpi-delivery').textContent = k.soCanGiaoHomNay + ' đơn';
     document.getElementById('kpi-debt').textContent = fVND(k.tongCongNo);
-    document.getElementById('kpi-chuanbigiao').textContent = (k.soChuanBiGiao||0) + ' đơn';
-    document.getElementById('kpi-ncc').textContent = (k.soHangNccSapVe||0) + ' SP';
-    if (k.soDonTreHan > 0) {
-      document.getElementById('kpi-late').innerHTML = `<span style="color:var(--red);font-size:11px">⚠️ ${k.soDonTreHan} đơn trễ hạn</span>`;
-    }
+    if (k.soDonTreHan > 0) document.getElementById('kpi-late').textContent = `⚠️ ${k.soDonTreHan} đơn trễ hạn`;
 
-    // Sidebar badge
-    if (k.soCanGiaoHomNay > 0) {
-      document.getElementById('badge-delivery').textContent = k.soCanGiaoHomNay;
-      document.getElementById('badge-delivery').style.display = '';
-    }
+    // Badges
+    if (k.soCanGiaoHomNay > 0) { document.getElementById('badge-delivery').textContent = k.soCanGiaoHomNay; document.getElementById('badge-delivery').style.display=''; }
 
     // Recent orders
     const recentEl = document.getElementById('recentOrders');
     if (res.donMoiNhat?.length) {
       recentEl.innerHTML = res.donMoiNhat.map(r => `
-        <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--gray-100);gap:10px;cursor:pointer" onclick="navTo('orders')">
+        <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--gray-100);gap:10px">
           <span style="font-weight:700;color:var(--blue);font-size:13px;min-width:55px">${r['Mã ĐH']}</span>
           <span style="flex:1;font-size:13px">${r['Tên Khách Hàng']}</span>
           <span style="font-weight:700;color:var(--navy);font-size:13px">${fVND(r['Thực Thu'])}</span>
@@ -1146,120 +1087,19 @@ async function loadDashboard() {
     const todayEl = document.getElementById('todayDelivery');
     if (res.canGiaoHomNay?.length) {
       todayEl.innerHTML = res.canGiaoHomNay.map(r => `
-        <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--gray-100);gap:10px;cursor:pointer" onclick="navTo('delivery')">
+        <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--gray-100);gap:10px">
           <span style="font-weight:700;color:var(--blue);font-size:13px;min-width:55px">${r['Mã GH']||r['Mã ĐH']}</span>
           <span style="flex:1;font-size:13px">${r['Tên KH']}</span>
           <span style="font-size:12px;color:var(--gray-400)">${r['Hình Thức']||''}</span>
-          <span style="font-size:11px;font-weight:600;color:var(--green)">Hôm nay</span>
         </div>`).join('');
     } else { todayEl.innerHTML = '<div class="empty-state" style="padding:24px"><div class="emoji" style="font-size:28px">✅</div><p style="font-size:12px">Không có lịch giao hôm nay</p></div>'; }
 
-    // ── ALERTS ──────────────────────────────────────────────────
+    // Alerts
     const alerts = [];
-    if (k.soDonTreHan > 0)
-      alerts.push(`<div class="alert alert-red">⚠️ Có <strong>${k.soDonTreHan}</strong> đơn hàng đã <strong>quá ngày giao</strong>! Cần xử lý ngay. <a href="#" onclick="navTo('orders')" style="color:var(--red);font-weight:700">Xem ngay →</a></div>`);
-    if (k.soDonSapGiao > 0)
-      alerts.push(`<div class="alert alert-warning">🔔 Có <strong>${k.soDonSapGiao}</strong> đơn sắp đến <strong>hạn giao hàng</strong> (trong 2 ngày tới). Chuẩn bị hàng! <a href="#" onclick="showDetailPanel('chuanBiGiao')" style="color:#92400E;font-weight:700">Xem đơn →</a></div>`);
-    if (k.soChuanBiGiao > 0)
-      alerts.push(`<div class="alert alert-blue">📦 Có <strong>${k.soChuanBiGiao}</strong> đơn hàng <strong>chưa giao</strong> cho khách. <a href="#" onclick="showDetailPanel('chuanBiGiao')" style="color:#1e40af;font-weight:700">Xem chi tiết →</a></div>`);
-    if (k.soHangNccSapVe > 0)
-      alerts.push(`<div class="alert alert-warning">🏭 Có <strong>${k.soHangNccSapVe}</strong> sản phẩm đặt NCC đang <strong>chờ hàng về</strong>. <a href="#" onclick="showDetailPanel('choHangNCC')" style="color:#92400E;font-weight:700">Xem chi tiết →</a></div>`);
+    if (k.soDonTreHan > 0) alerts.push(`<div class="alert alert-red">⚠️ Có <strong>${k.soDonTreHan}</strong> đơn hàng đã quá ngày giao hàng! Cần xử lý ngay.</div>`);
+    if (k.soHangNccSapVe > 0) alerts.push(`<div class="alert alert-warning">📦 Có <strong>${k.soHangNccSapVe}</strong> đơn đặt NCC đang chờ hàng về. Kiểm tra tiến độ.</div>`);
     document.getElementById('alertsArea').innerHTML = alerts.join('');
-  } catch(e) { console.error('Dashboard error:', e); }
-}
-
-// ── DETAIL PANEL: Xem tất cả ─────────────────────────────────
-function showDetailPanel(type) {
-  const titles = {
-    chuanBiGiao: '📦 Chuẩn bị giao hàng — Tất cả đơn chưa giao (gần nhất lên đầu)',
-    choHangNCC:  '🏭 Chờ hàng từ NCC — Sắp xếp theo ngày hẹn gần nhất',
-    congNo:      '💳 Công nợ khách hàng'
-  };
-  document.getElementById('detailPanelTitle').textContent = titles[type] || 'Chi tiết';
-  if (type === 'congNo') { navTo('customers'); return; }
-
-  let html = '';
-  if (!_dashData) {
-    html = '<p style="text-align:center;padding:32px;color:var(--gray-400)">Đang tải dữ liệu...</p>';
-  } else if (type === 'chuanBiGiao') {
-    const data = _dashData.donChuaGiao || [];
-    if (!data.length) { html = '<div class="empty-state"><div class="emoji">✅</div><p>Tất cả đơn hàng đã giao!</p></div>'; }
-    else {
-      const today = new Date();
-      html = `<p style="font-size:12px;color:var(--gray-400);margin-bottom:12px">Sắp xếp theo ngày giao gần nhất. 🔴 = hôm nay/trễ hạn, 🔔 = trong 2 ngày tới</p>
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead><tr style="background:var(--navy);color:#fff">
-          <th style="padding:9px 12px;text-align:left">Mã ĐH</th>
-          <th style="padding:9px 12px;text-align:left">Khách hàng</th>
-          <th style="padding:9px 12px;text-align:left">Ngày giao HH</th>
-          <th style="padding:9px 12px;text-align:right">Thực thu</th>
-          <th style="padding:9px 12px;text-align:right">Còn nợ</th>
-          <th style="padding:9px 12px;text-align:left">Trạng thái</th>
-          <th style="padding:9px 12px;text-align:left">NV</th>
-        </tr></thead>
-        <tbody>${data.map((r,i) => {
-          const p = String(r['Ngày Giao HH']||'').split('/');
-          const ngayGiao = p.length===3 ? new Date(p[2],p[1]-1,p[0]) : null;
-          const diff = ngayGiao ? Math.ceil((ngayGiao-today)/(86400000)) : null;
-          let ngayLabel = r['Ngày Giao HH']||'--';
-          if (diff!==null) {
-            if (diff<0) ngayLabel=`<span style="color:var(--red);font-weight:700">⚠️ ${r['Ngày Giao HH']} (trễ ${Math.abs(diff)}n)</span>`;
-            else if (diff===0) ngayLabel=`<span style="color:var(--red);font-weight:700">🔴 Hôm nay!</span>`;
-            else if (diff<=2) ngayLabel=`<span style="color:#D97706;font-weight:700">🔔 ${r['Ngày Giao HH']} (còn ${diff}n)</span>`;
-          }
-          return `<tr style="background:${i%2?'var(--gray-50)':'#fff'};border-bottom:1px solid var(--gray-100)">
-            <td style="padding:9px 12px;font-weight:700;color:var(--blue)">${r['Mã ĐH']}</td>
-            <td style="padding:9px 12px"><div style="font-weight:600">${r['Tên Khách Hàng']}</div><div style="font-size:11px;color:var(--gray-400)">${r['SĐT']||''}</div></td>
-            <td style="padding:9px 12px">${ngayLabel}</td>
-            <td style="padding:9px 12px;text-align:right;font-weight:700">${fVND(r['Thực Thu'])}</td>
-            <td style="padding:9px 12px;text-align:right">${parseFloat(r['Công Nợ'])>0?`<span style="color:var(--red);font-weight:700">${fVND(r['Công Nợ'])}</span>`:'<span style="color:var(--green)">0đ</span>'}</td>
-            <td style="padding:9px 12px">${statusBadge(r['Trạng Thái'])}</td>
-            <td style="padding:9px 12px;font-size:12px">${r['Nhân Viên']||''}</td>
-          </tr>`;
-        }).join('')}</tbody>
-      </table>`;
-    }
-  } else if (type === 'choHangNCC') {
-    const data = _dashData.datNccChuaVe || [];
-    if (!data.length) { html = '<div class="empty-state"><div class="emoji">✅</div><p>Không có đơn đặt NCC nào đang chờ!</p></div>'; }
-    else {
-      const today = new Date();
-      html = `<p style="font-size:12px;color:var(--gray-400);margin-bottom:12px">Sắp xếp theo ngày hẹn hàng về gần nhất. 🔴 = quá hạn, 🔔 = trong 3 ngày tới</p>
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead><tr style="background:var(--navy);color:#fff">
-          <th style="padding:9px 12px;text-align:left">Mã</th>
-          <th style="padding:9px 12px;text-align:left">Liên kết ĐH</th>
-          <th style="padding:9px 12px;text-align:left">Nhà CC</th>
-          <th style="padding:9px 12px;text-align:left">Sản phẩm</th>
-          <th style="padding:9px 12px;text-align:center">SL</th>
-          <th style="padding:9px 12px;text-align:left">Ngày hẹn về</th>
-          <th style="padding:9px 12px;text-align:left">KH chờ</th>
-        </tr></thead>
-        <tbody>${data.map((r,i) => {
-          const p = String(r['Ngày Hẹn Về']||'').split('/');
-          const ngayHen = p.length===3 ? new Date(p[2],p[1]-1,p[0]) : null;
-          const diff = ngayHen ? Math.ceil((ngayHen-today)/(86400000)) : null;
-          let ngayLabel = r['Ngày Hẹn Về']||'<span style="color:var(--gray-400)">Chưa hẹn</span>';
-          if (diff!==null) {
-            if (diff<0) ngayLabel=`<span style="color:var(--red);font-weight:700">⚠️ ${r['Ngày Hẹn Về']} (quá ${Math.abs(diff)}n)</span>`;
-            else if (diff===0) ngayLabel=`<span style="color:var(--red);font-weight:700">🔴 Hôm nay!</span>`;
-            else if (diff<=3) ngayLabel=`<span style="color:#D97706;font-weight:700">🔔 ${r['Ngày Hẹn Về']} (còn ${diff}n)</span>`;
-          }
-          return `<tr style="background:${i%2?'var(--gray-50)':'#fff'};border-bottom:1px solid var(--gray-100)">
-            <td style="padding:9px 12px;font-weight:700;color:#7C3AED">${r['Mã ĐH NCC']}</td>
-            <td style="padding:9px 12px;color:var(--blue);font-weight:600">${r['Mã ĐH KH']||'--'}</td>
-            <td style="padding:9px 12px;font-weight:500">${r['Nhà CC']}</td>
-            <td style="padding:9px 12px">${r['Sản Phẩm']}</td>
-            <td style="padding:9px 12px;text-align:center;font-weight:700">${r['SL']}</td>
-            <td style="padding:9px 12px">${ngayLabel}</td>
-            <td style="padding:9px 12px;font-size:12px;color:var(--blue)">${r['Tên KH']||'--'}</td>
-          </tr>`;
-        }).join('')}</tbody>
-      </table>`;
-    }
-  }
-  document.getElementById('detailPanelContent').innerHTML = html;
-  openModal('detailPanelModal');
+  } catch(e) { console.error(e); }
 }
 
 // ─── ORDERS ────────────────────────────────────────────────────
@@ -1278,16 +1118,25 @@ function renderOrders(data) {
     const conNo = parseFloat(r['Công Nợ']) || 0;
     const trangThai = r['Trạng Thái'] || '';
     const isLate = r._treHan;
+    // Sản phẩm: hiện SP đầu tiên + tổng số
+    const spRaw = r['Chi tiết SP'] || '';
+    const spParts = spRaw.split(',');
+    const spFirst = spParts[0]?.trim() || '--';
+    const spCount = spParts.length;
+    const spLabel = spFirst + (spCount > 1 ? ` <span style="color:var(--blue);font-size:11px;font-weight:700">+${spCount-1} SP</span>` : '');
+    // Ngày giao
+    let ngayGiaoLabel = r['Ngày Giao HH'] || '--';
+    if (isLate) ngayGiaoLabel = `<span style="color:var(--red);font-weight:700">⚠️ ${r['Ngày Giao HH']}</span>`;
     return `<tr ${isLate?'style="background:#FEF2F2"':''}>
       <td><a href="#" style="color:var(--blue);font-weight:700;text-decoration:none" onclick="viewOrder('${r['Mã ĐH']}')">${r['Mã ĐH']}</a></td>
       <td style="font-size:12px;color:var(--gray-600)">${r['Ngày Tạo']}</td>
-      <td style="font-size:12px">${isLate?'<span style="color:var(--red);font-weight:700">⚠️ '+r['Ngày Giao HH']+'</span>':r['Ngày Giao HH']} <span style="font-size:10px;color:var(--gray-400)">${r['Loại Giao']||''}</span></td>
+      <td style="font-size:12px">${ngayGiaoLabel}</td>
       <td><div style="font-weight:600">${r['Tên Khách Hàng']}</div><div style="font-size:11px;color:var(--gray-400)">${r['SĐT']||''}</div></td>
-      <td style="font-size:12px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r['Chi tiết SP']||''}</td>
+      <td style="font-size:12px;max-width:160px">${spLabel}</td>
       <td style="font-weight:700;text-align:right">${fVND(r['Tổng Tiền'])}</td>
       <td style="color:var(--green);font-weight:600;text-align:right">${fVND(r['Đã Thanh Toán'])}</td>
       <td style="text-align:right">${conNo>0?`<span style="color:var(--red);font-weight:700">${fVND(conNo)}</span>`:'<span style="color:var(--green)">0đ</span>'}</td>
-      <td>${statusBadge(trangThai)}</td>
+      <td>${orderStatusBadge(trangThai)}</td>
       <td style="font-size:12px">${r['Nhân Viên']||''}</td>
       <td>
         <div style="display:flex;gap:4px">
@@ -1305,16 +1154,40 @@ function filterOrders() {
   const st = document.getElementById('orderStatus').value;
   let data = allOrders.filter(r =>
     (!q || [r['Mã ĐH'],r['Tên Khách Hàng'],r['SĐT'],r['Nhân Viên']].join(' ').toLowerCase().includes(q)) &&
-    (st==='all' || String(r['Trạng Thái']).includes(st))
+    (st==='all' || String(r['Trạng Thái']) === st)
   );
   renderOrders(data);
 }
 
+let _editingOrderId = null;
 function openOrderModal(data = null) {
   cart = [];
-  document.getElementById('orderModalTitle').textContent = data ? '✏️ Sửa đơn hàng' : '＋ Tạo đơn hàng mới';
+  _editingOrderId = data ? data['Mã ĐH'] : null;
+  document.getElementById('orderModalTitle').textContent = data ? `✏️ Sửa đơn hàng ${data['Mã ĐH']}` : '＋ Tạo đơn hàng mới';
+  // Reset form
+  ['o-tenKH','o-sdt','o-diaChi','o-ghiChu'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('s-discount').value = 0;
+  document.getElementById('s-tienmat').value = 0;
+  document.getElementById('s-ck').value = 0;
+  // Set datetime-local default = now
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  document.getElementById('o-ngayGiao').value = now.toISOString().slice(0,16);
+  document.getElementById('o-loaiGiao').value = 'henngay';
+  toggleLoaiGiao();
+  // Nếu edit: điền dữ liệu
+  if (data) {
+    document.getElementById('o-tenKH').value = data['Tên Khách Hàng'] || '';
+    document.getElementById('o-sdt').value = data['SĐT'] || '';
+    document.getElementById('o-diaChi').value = data['Địa Chỉ Giao'] || '';
+    document.getElementById('o-ghiChu').value = data['Ghi Chú'] || '';
+  }
   renderCart();
   loadProductsForOrder();
+  // Load khách hàng để dùng cho autocomplete
+  if (!allCustomers.length) {
+    api('GET', { action: 'getKhachHang' }).then(res => { allCustomers = res.data || []; });
+  }
   openModal('orderModal');
 }
 
@@ -1326,12 +1199,27 @@ async function loadProductsForOrder() {
 
 function renderProductGrid(products) {
   const grid = document.getElementById('productGridOrder');
-  grid.innerHTML = products.filter(p => !String(p['Trạng Thái']).includes('Hết hàng') && !String(p['Trạng Thái']).includes('Ẩn')).map(p => `
-    <div class="product-card-sel" onclick="addToCart('${p['Mã SP']}','${escHtml(p['Tên Sản Phẩm'])}','${p['Danh Mục']}','${p['ĐVT']}',${p['Giá Bán']},${p['Tồn Kho']})">
+  const filtered = products.filter(p => !String(p['Trạng Thái']).includes('Ẩn'));
+  if (!filtered.length) { grid.innerHTML = '<div style="color:var(--gray-400);font-size:13px;padding:12px">Không có sản phẩm</div>'; return; }
+  grid.innerHTML = filtered.map(p => {
+    const ton = parseInt(p['Tồn Kho']) || 0;
+    const isHet = ton === 0;
+    const isSap = !isHet && ton <= 2;
+    let stockLabel = `<div class="pc-stock" style="color:var(--green)">Tồn: ${ton} ${p['ĐVT']}</div>`;
+    let cardStyle = '';
+    if (isHet) {
+      stockLabel = `<div class="pc-stock" style="color:var(--red);font-weight:700">⚠️ Hết hàng (đặt NCC)</div>`;
+      cardStyle = 'border-color:#FCA5A5;background:#FEF2F2';
+    } else if (isSap) {
+      stockLabel = `<div class="pc-stock" style="color:#D97706;font-weight:700">⚡ Sắp hết: ${ton} ${p['ĐVT']}</div>`;
+      cardStyle = 'border-color:#FDE68A;background:#FFFBEB';
+    }
+    return `<div class="product-card-sel" style="${cardStyle}" onclick="addToCart('${p['Mã SP']}','${escHtml(p['Tên Sản Phẩm'])}','${p['Danh Mục']}','${p['ĐVT']}',${p['Giá Bán']},${ton})">
       <div class="pc-name">${p['Tên Sản Phẩm']}</div>
       <div class="pc-price">${fVND(p['Giá Bán'])}</div>
-      <div class="pc-stock">Tồn: ${p['Tồn Kho']} ${p['ĐVT']}</div>
-    </div>`).join('') || '<div style="color:var(--gray-400);font-size:13px;padding:12px">Không có sản phẩm</div>';
+      ${stockLabel}
+    </div>`;
+  }).join('');
 }
 
 function filterProductsInOrder() {
@@ -1340,19 +1228,25 @@ function filterProductsInOrder() {
 }
 
 function addToCart(maSP, ten, danhMuc, dvt, gia, ton) {
+  const tonKho = parseInt(ton) || 0;
   const existing = cart.find(c => c.maSP === maSP);
-  if (existing) { existing.soLuong++; } 
-  else { cart.push({ maSP, tenSP: ten, danhMuc, dvt, donGia: parseInt(gia), soLuong: 1, tonKho: parseInt(ton) }); }
+  if (existing) { existing.soLuong++; }
+  else { cart.push({ maSP, tenSP: ten, danhMuc, dvt, donGia: parseInt(gia), soLuong: 1, tonKho, hetHang: tonKho === 0 }); }
   renderCart();
-  showToast(`Đã thêm: ${ten}`, 'success');
+  if (tonKho === 0) showToast(`⚠️ ${ten} — Hết hàng trong kho! Sẽ cần đặt NCC.`, 'warning');
+  else showToast(`Đã thêm: ${ten}`, 'success');
 }
 
 function renderCart() {
   const el = document.getElementById('cartItems');
   if (!cart.length) { el.innerHTML = '<div class="empty-state" style="padding:16px"><div class="emoji" style="font-size:24px">🛒</div><p style="font-size:12px">Chưa có sản phẩm</p></div>'; recalcOrder(); return; }
   el.innerHTML = cart.map((c,i) => `
-    <div class="cart-item">
-      <div class="cart-item-name">${c.tenSP}<br><span style="font-size:11px;color:var(--gray-400)">${c.dvt}</span></div>
+    <div class="cart-item" style="${c.hetHang?'background:#FEF2F2;border-radius:6px;padding:6px 4px':''}">
+      <div class="cart-item-name">
+        ${c.tenSP}<br>
+        <span style="font-size:11px;color:var(--gray-400)">${c.dvt}</span>
+        ${c.hetHang?'<br><span style="font-size:10px;color:var(--red);font-weight:700">⚠️ Cần đặt NCC</span>':''}
+      </div>
       <div class="cart-qty">
         <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
         <input class="qty-input" value="${c.soLuong}" onchange="setQty(${i},this.value)">
@@ -1372,10 +1266,13 @@ function recalcOrder() {
   const total = cart.reduce((s,c) => s + c.donGia * c.soLuong, 0);
   const disc = parseInt(document.getElementById('s-discount').value) || 0;
   const final = total - disc;
-  const paid = parseInt(document.getElementById('s-paid').value) || 0;
+  const tm = parseInt(document.getElementById('s-tienmat').value) || 0;
+  const ck = parseInt(document.getElementById('s-ck').value) || 0;
+  const paid = tm + ck;
   const debt = final - paid;
   document.getElementById('s-total').textContent = fVND(total);
   document.getElementById('s-final').textContent = fVND(final);
+  document.getElementById('s-paid-total').textContent = fVND(paid);
   document.getElementById('s-debt').textContent = fVND(Math.max(0, debt));
   document.getElementById('s-debt').style.color = debt > 0 ? 'var(--red)' : 'var(--green)';
 }
@@ -1385,28 +1282,44 @@ async function saveOrder(print) {
   const sdt = document.getElementById('o-sdt').value.trim();
   if (!tenKH || !sdt) { showToast('Vui lòng nhập tên và SĐT khách hàng!', 'error'); return; }
   if (!cart.length) { showToast('Giỏ hàng trống! Chọn ít nhất 1 sản phẩm.', 'error'); return; }
+  const loaiGiao = document.getElementById('o-loaiGiao').value;
   const tongTien = cart.reduce((s,c) => s + c.donGia * c.soLuong, 0);
+  const tm = parseInt(document.getElementById('s-tienmat').value) || 0;
+  const ck = parseInt(document.getElementById('s-ck').value) || 0;
+  const daTT = tm + ck;
+  // Kiểm tra SP hết hàng
+  const spHetHang = cart.filter(c => c.hetHang);
+  if (spHetHang.length > 0 && !confirm(`⚠️ Đơn hàng có ${spHetHang.length} sản phẩm hết hàng:
+${spHetHang.map(s=>s.tenSP).join(', ')}
+
+Cần đặt NCC sau khi tạo đơn. Tiếp tục?`)) return;
+  // Xác định trạng thái
+  const coHetHang = cart.some(c => c.hetHang);
+  let trangThai = 'Chưa giao';
+  if (loaiGiao === 'tumanghang') trangThai = 'Hoàn thành';
+  else if (coHetHang && cart.some(c => !c.hetHang)) trangThai = 'Đã giao 1 phần';
   const body = {
-    action: 'createDonHang',
+    action: _editingOrderId ? 'updateDonHang' : 'createDonHang',
+    maDH: _editingOrderId,
     tenKH, sdt,
     diaChi: document.getElementById('o-diaChi').value,
     ngayGiaoHH: document.getElementById('o-ngayGiao').value,
+    loaiGiao: loaiGiao === 'tumanghang' ? '🚶 Tự mang hàng về' : '📅 Hẹn ngày giao',
     nhanVien: document.getElementById('o-nhanVien').value,
     ghiChu: document.getElementById('o-ghiChu').value,
-    tongTien,
-    giamGia: parseInt(document.getElementById('s-discount').value) || 0,
-    daTT: parseInt(document.getElementById('s-paid').value) || 0,
-    chiTiet: cart
+    tongTien, giamGia: parseInt(document.getElementById('s-discount').value) || 0,
+    daTT, tienMat: tm, chuyenKhoan: ck,
+    trangThai, chiTiet: cart
   };
   try {
     const res = await api('POST', body);
     if (res.success || !SCRIPT_URL) {
-      showToast(`Tạo đơn thành công! ${res.maDH||''}`, 'success');
+      showToast(_editingOrderId ? 'Đã cập nhật đơn hàng!' : `Tạo đơn thành công! ${res.maDH||''}`, 'success');
       closeModal('orderModal');
       loadOrders();
-      if (print) printInvoiceData(body, res.maDH || 'DH-NEW');
-    } else { showToast(res.error || 'Lỗi tạo đơn', 'error'); }
-  } catch(e) { showToast('Lỗi kết nối', 'error'); }
+      if (print) printInvoiceData(body, res.maDH || _editingOrderId || 'DH-NEW');
+    } else { showToast(res.error || 'Lỗi lưu đơn', 'error'); }
+  } catch(err) { showToast('Lỗi kết nối: ' + err.message, 'error'); }
 }
 
 async function deleteOrder(maDH) {
@@ -2050,8 +1963,138 @@ function showConfirmChoice(msg, options) {
 }
 
 function exportExcel(type) { showToast('Xuất Excel qua Google Sheets → File → Download', 'info'); }
-function viewOrder(id) { showToast(`Xem chi tiết đơn ${id}`, 'info'); }
-function editOrder(id) { showToast(`Sửa đơn hàng ${id} — đang phát triển trong v1.1`, 'info'); }
+function editOrder(id) {
+  const order = allOrders.find(r => r['Mã ĐH'] === id);
+  if (!order) { showToast('Không tìm thấy đơn hàng!', 'error'); return; }
+  openOrderModal(order);
+}
+
+function viewOrder(id) {
+  const order = allOrders.find(r => r['Mã ĐH'] === id);
+  if (!order) return;
+  document.getElementById('orderDetailTitle').textContent = `Chi tiết đơn hàng ${id}`;
+  // Lấy chi tiết sản phẩm từ CHI_TIET_DON nếu có, hoặc parse từ Chi tiết SP
+  const spRaw = order['Chi tiết SP'] || '';
+  document.getElementById('orderDetailContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div>
+        <div style="font-size:11px;color:var(--gray-400);font-weight:600;margin-bottom:4px">KHÁCH HÀNG</div>
+        <div style="font-weight:700;font-size:15px">${order['Tên Khách Hàng']}</div>
+        <div style="color:var(--gray-600);font-size:13px">${order['SĐT']||''}</div>
+        <div style="color:var(--gray-600);font-size:12px;margin-top:4px">${order['Địa Chỉ Giao']||''}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--gray-400);font-weight:600;margin-bottom:4px">ĐƠN HÀNG</div>
+        <div style="font-size:13px">Ngày tạo: <strong>${order['Ngày Tạo']}</strong></div>
+        <div style="font-size:13px">Ngày giao: <strong>${order['Ngày Giao HH']||'--'}</strong></div>
+        <div style="font-size:13px">Loại: <strong>${order['Loại Giao']||'--'}</strong></div>
+        <div style="font-size:13px">Nhân viên: <strong>${order['Nhân Viên']||'--'}</strong></div>
+        <div style="margin-top:6px">${orderStatusBadge(order['Trạng Thái'])}</div>
+      </div>
+    </div>
+    <div style="background:var(--gray-50);border-radius:8px;padding:14px;margin-bottom:12px">
+      <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px;text-transform:uppercase">Danh sách sản phẩm</div>
+      <table style="width:100%;font-size:13px;border-collapse:collapse">
+        <thead><tr style="background:var(--navy);color:#fff"><th style="padding:8px 10px;text-align:left">Sản phẩm</th><th style="padding:8px 10px;text-align:center">SL</th><th style="padding:8px 10px;text-align:right">Đơn giá</th><th style="padding:8px 10px;text-align:right">Thành tiền</th></tr></thead>
+        <tbody id="orderDetailSPBody"><tr><td colspan="4" style="padding:12px;text-align:center;color:var(--gray-400)">Đang tải chi tiết sản phẩm...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="summary-box">
+      <div class="summary-row"><span>Tổng tiền hàng</span><span style="font-weight:700">${fVND(order['Tổng Tiền'])}</span></div>
+      ${parseFloat(order['Giảm Giá']||0)>0?`<div class="summary-row"><span>Giảm giá</span><span style="color:var(--red)">-${fVND(order['Giảm Giá'])}</span></div>`:''}
+      <div class="summary-row total"><span>THỰC THU</span><span style="color:var(--blue)">${fVND(order['Thực Thu'])}</span></div>
+      <div class="summary-row"><span>Đã thanh toán</span><span style="color:var(--green);font-weight:700">${fVND(order['Đã Thanh Toán'])}</span></div>
+      ${parseFloat(order['Công Nợ']||0)>0?`<div class="summary-row debt"><span>⚠️ Công nợ còn lại</span><span style="color:var(--red);font-weight:800">${fVND(order['Công Nợ'])}</span></div>`:''}
+      ${order['Ghi Chú']?`<div style="margin-top:10px;padding:8px;background:#f8f9fa;border-radius:6px;font-size:12px;color:var(--gray-600)">📝 ${order['Ghi Chú']}</div>`:''}
+    </div>`;
+  openModal('orderDetailModal');
+  // Tải chi tiết SP từ API
+  api('GET', { action:'getChiTietDon', maDH: id }).then(res => {
+    const spData = res.data || [];
+    const tbody = document.getElementById('orderDetailSPBody');
+    if (!tbody) return;
+    if (!spData.length) {
+      // Parse từ chuỗi Chi tiết SP nếu không có API data
+      tbody.innerHTML = spRaw ? spRaw.split(',').map((sp,i) => `<tr style="background:${i%2?'var(--gray-50)':'#fff'}"><td style="padding:8px 10px">${sp.trim()}</td><td style="padding:8px 10px;text-align:center">--</td><td style="padding:8px 10px;text-align:right">--</td><td style="padding:8px 10px;text-align:right">--</td></tr>`).join('') : '<tr><td colspan="4" style="padding:12px;text-align:center;color:var(--gray-400)">Chưa có dữ liệu chi tiết</td></tr>';
+    } else {
+      tbody.innerHTML = spData.map((sp,i) => `<tr style="background:${i%2?'var(--gray-50)':'#fff'}">
+        <td style="padding:8px 10px;font-weight:500">${sp['Tên Sản Phẩm']||sp['Tên SP']||''}</td>
+        <td style="padding:8px 10px;text-align:center">${sp['Số Lượng']||sp['SL']||''}</td>
+        <td style="padding:8px 10px;text-align:right">${fVND(sp['Đơn Giá']||0)}</td>
+        <td style="padding:8px 10px;text-align:right;font-weight:700">${fVND(sp['Thành Tiền']||0)}</td>
+      </tr>`).join('');
+    }
+  }).catch(() => {});
+}
+
+let _printOrderData = null;
+function printInvoiceFromDetail() {
+  if (_printOrderData) printInvoice(_printOrderData);
+}
+
+// Badge trạng thái mới cho đơn hàng
+function orderStatusBadge(s) {
+  if (!s) return '';
+  if (s.includes('Hoàn thành')) return '<span class="badge badge-green">🟢 Hoàn thành</span>';
+  if (s.includes('Đã giao 1 phần')) return '<span class="badge badge-yellow">🟡 Đã giao 1 phần</span>';
+  if (s.includes('Chưa giao')) return '<span class="badge badge-gray">⬜ Chưa giao</span>';
+  if (s.includes('Hủy')) return '<span class="badge badge-red">🔴 Đã hủy</span>';
+  return `<span class="badge badge-gray">${s}</span>`;
+}
+
+// Toggle loại giao
+function toggleLoaiGiao() {
+  const val = document.getElementById('o-loaiGiao').value;
+  const wrap = document.getElementById('o-ngayGiaoWrap');
+  if (val === 'tumanghang') {
+    wrap.style.opacity = '0.5';
+    wrap.querySelector('label').textContent = 'Ngày giao (tự mang)';
+  } else {
+    wrap.style.opacity = '1';
+    wrap.querySelector('label').textContent = 'Ngày & Giờ giao hàng *';
+  }
+}
+
+// Tìm kiếm khách hàng theo tên
+function searchKHByName(q) {
+  const suggest = document.getElementById('kh-suggest-name');
+  if (!q || q.length < 2) { suggest.style.display = 'none'; return; }
+  const matches = allCustomers.filter(c => (c['Tên KH']||'').toLowerCase().includes(q.toLowerCase())).slice(0, 6);
+  if (!matches.length) { suggest.style.display = 'none'; return; }
+  suggest.style.display = 'block';
+  suggest.innerHTML = matches.map(c => `
+    <div style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--gray-100)" 
+         onmousedown="fillKH('${escHtml(c['Tên KH'])}','${c['SĐT']||''}','${escHtml(c['Địa Chỉ']||'')}')"
+         onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='#fff'">
+      <div style="font-weight:600">${c['Tên KH']}</div>
+      <div style="font-size:11px;color:var(--gray-400)">${c['SĐT']||''} — ${c['Địa Chỉ']||''}</div>
+    </div>`).join('');
+}
+
+// Tìm kiếm khách hàng theo SĐT
+function searchKHBySdt(q) {
+  const suggest = document.getElementById('kh-suggest-sdt');
+  if (!q || q.length < 6) { suggest.style.display = 'none'; return; }
+  const matches = allCustomers.filter(c => (c['SĐT']||'').includes(q)).slice(0, 6);
+  if (!matches.length) { suggest.style.display = 'none'; return; }
+  suggest.style.display = 'block';
+  suggest.innerHTML = matches.map(c => `
+    <div style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--gray-100)"
+         onmousedown="fillKH('${escHtml(c['Tên KH'])}','${c['SĐT']||''}','${escHtml(c['Địa Chỉ']||'')}')"
+         onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='#fff'">
+      <div style="font-weight:600">${c['Tên KH']} — ${c['SĐT']||''}</div>
+      <div style="font-size:11px;color:var(--gray-400)">${c['Địa Chỉ']||''}</div>
+    </div>`).join('');
+}
+
+// Điền thông tin KH vào form
+function fillKH(ten, sdt, diaChi) {
+  document.getElementById('o-tenKH').value = ten;
+  document.getElementById('o-sdt').value = sdt;
+  document.getElementById('o-diaChi').value = diaChi;
+  document.getElementById('kh-suggest-name').style.display = 'none';
+  document.getElementById('kh-suggest-sdt').style.display = 'none';
+}
 function editProduct(id) { showToast(`Sửa SP ${id} — đang phát triển`, 'info'); }
 async function deleteProduct(id) { if (!confirm(`Ẩn sản phẩm ${id}?`)) return; await api('POST', { action:'deleteSanPham', maSP:id }); showToast('Đã ẩn sản phẩm', 'success'); loadProducts(); }
 function editCustomer(id) { showToast('Sửa khách hàng — đang phát triển trong v1.1', 'info'); }
