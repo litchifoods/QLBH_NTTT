@@ -363,9 +363,10 @@ tbody td{padding:10px 12px;vertical-align:middle}
           <div class="search-wrap"><span class="search-icon">🔍</span><input id="orderSearch" placeholder="Tìm mã ĐH, khách hàng, nhân viên..." oninput="filterOrders()"></div>
           <select id="orderStatus" onchange="filterOrders()">
             <option value="all">Tất cả trạng thái</option>
-            <option value="Chưa giao">⬜ Chưa giao</option>
-            <option value="Đã giao 1 phần">🟡 Đã giao 1 phần</option>
+            <option value="Mới">🔵 Mới</option>
+            <option value="Đang xử lý">🟡 Đang xử lý</option>
             <option value="Hoàn thành">🟢 Hoàn thành</option>
+            <option value="Hủy">🔴 Hủy</option>
           </select>
           <input type="date" id="orderFrom" onchange="filterOrders()">
           <span style="color:var(--gray-400);font-size:12px">đến</span>
@@ -635,7 +636,7 @@ tbody td{padding:10px 12px;vertical-align:middle}
     </div>
     <div class="modal-body" style="max-height:75vh;overflow-y:auto">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <!-- Cột trái -->
+        <!-- Cột trái: Thông tin + Sản phẩm -->
         <div>
           <div class="form-section">
             <div class="form-section-title">👤 Thông tin khách hàng</div>
@@ -643,12 +644,12 @@ tbody td{padding:10px 12px;vertical-align:middle}
               <div class="form-group" style="position:relative">
                 <label>Tên khách hàng *</label>
                 <input id="o-tenKH" placeholder="Tìm KH cũ hoặc nhập tên mới..." autocomplete="off" oninput="searchKHByName(this.value)">
-                <div id="kh-suggest-name" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--blue);border-radius:0 0 8px 8px;z-index:999;max-height:180px;overflow-y:auto;box-shadow:var(--shadow)"></div>
+                <div id="kh-suggest-name" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--blue);border-radius:0 0 8px 8px;z-index:999;max-height:160px;overflow-y:auto;box-shadow:var(--shadow)"></div>
               </div>
               <div class="form-group" style="position:relative">
                 <label>Số điện thoại *</label>
-                <input id="o-sdt" placeholder="0912345678" autocomplete="off" oninput="searchKHBySdt(this.value)">
-                <div id="kh-suggest-sdt" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--blue);border-radius:0 0 8px 8px;z-index:999;max-height:180px;overflow-y:auto;box-shadow:var(--shadow)"></div>
+                <input id="o-sdt" type="tel" placeholder="0912345678" autocomplete="off" oninput="searchKHBySdt(this.value)">
+                <div id="kh-suggest-sdt" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--blue);border-radius:0 0 8px 8px;z-index:999;max-height:160px;overflow-y:auto;box-shadow:var(--shadow)"></div>
               </div>
               <div class="form-group span-2"><label>Địa chỉ giao hàng</label><input id="o-diaChi" placeholder="Số nhà, đường, quận/huyện, tỉnh/thành"></div>
             </div>
@@ -657,15 +658,15 @@ tbody td{padding:10px 12px;vertical-align:middle}
             <div class="form-section-title">📅 Thông tin giao hàng</div>
             <div class="form-grid">
               <div class="form-group">
-                <label>Loại giao *</label>
-                <select id="o-loaiGiao" onchange="toggleLoaiGiao()">
-                  <option value="henngay">📅 Hẹn ngày giao</option>
-                  <option value="tumanghang">🚶 Tự mang hàng về</option>
-                </select>
+                <label>Ngày giao hàng *</label>
+                <input type="date" id="o-ngayGiao">
               </div>
-              <div class="form-group" id="o-ngayGiaoWrap">
-                <label>Ngày & Giờ giao hàng *</label>
-                <input type="datetime-local" id="o-ngayGiao">
+              <div class="form-group">
+                <label>Loại giao</label>
+                <select id="o-loaiGiao">
+                  <option value="today">🟢 Giao ngay hôm nay</option>
+                  <option value="schedule">🟡 Hẹn ngày giao</option>
+                </select>
               </div>
               <div class="form-group"><label>Nhân viên *</label>
                 <select id="o-nhanVien">
@@ -698,22 +699,19 @@ tbody td{padding:10px 12px;vertical-align:middle}
             </div>
             <div class="summary-row total"><span>THỰC THU</span><span id="s-final" class="text-blue">0đ</span></div>
             <div class="divider"></div>
-            <div class="summary-row" style="font-weight:700;color:var(--navy)"><span>Đã thanh toán</span><span id="s-paid-total" style="color:var(--green)">0đ</span></div>
-            <div class="summary-row" style="font-size:12px;padding:3px 0">
-              <span style="color:var(--gray-600)">— Tiền mặt</span>
+            <div class="summary-row">
+              <span>Đã thanh toán</span>
               <div class="flex items-center gap-4">
-                <input type="number" id="s-tienmat" value="0" min="0" style="width:100px;padding:3px 8px;border:1px solid var(--gray-200);border-radius:5px;font-size:12px;text-align:right" oninput="recalcOrder()">
-                <span style="color:var(--gray-400);font-size:11px">đ</span>
-              </div>
-            </div>
-            <div class="summary-row" style="font-size:12px;padding:3px 0">
-              <span style="color:var(--gray-600)">— Chuyển khoản</span>
-              <div class="flex items-center gap-4">
-                <input type="number" id="s-ck" value="0" min="0" style="width:100px;padding:3px 8px;border:1px solid var(--gray-200);border-radius:5px;font-size:12px;text-align:right" oninput="recalcOrder()">
-                <span style="color:var(--gray-400);font-size:11px">đ</span>
+                <input type="number" id="s-paid" value="0" min="0" style="width:110px;padding:4px 8px;border:1px solid var(--gray-200);border-radius:5px;font-size:13px;text-align:right" oninput="recalcOrder()">
+                <span style="color:var(--gray-400);font-size:12px">đ</span>
               </div>
             </div>
             <div class="summary-row debt"><span>⚠️ Công nợ còn lại</span><span id="s-debt" class="fw-800">0đ</span></div>
+          </div>
+          <div style="margin-top:12px">
+            <div class="form-group"><label>Hình thức thanh toán</label>
+              <select id="o-htTT"><option>Tiền mặt</option><option>Chuyển khoản</option><option>Tiền mặt + Chuyển khoản</option></select>
+            </div>
           </div>
           <div id="orderQRBox" style="display:none;margin-top:12px;text-align:center">
             <p style="font-size:12px;color:var(--gray-400);margin-bottom:8px">QR Thanh toán</p>
@@ -726,21 +724,6 @@ tbody td{padding:10px 12px;vertical-align:middle}
       <button class="btn btn-ghost" onclick="closeModal('orderModal')">Hủy</button>
       <button class="btn btn-outline" onclick="saveOrder(false)">💾 Lưu đơn</button>
       <button class="btn btn-primary" onclick="saveOrder(true)">🖨️ Lưu & In hóa đơn</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: Chi tiết đơn hàng -->
-<div class="modal-overlay" id="orderDetailModal">
-  <div class="modal modal-lg">
-    <div class="modal-header">
-      <h3 id="orderDetailTitle">Chi tiết đơn hàng</h3>
-      <button class="modal-close" onclick="closeModal('orderDetailModal')">✕</button>
-    </div>
-    <div class="modal-body" id="orderDetailContent" style="max-height:70vh;overflow-y:auto"></div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('orderDetailModal')">Đóng</button>
-      <button class="btn btn-outline" onclick="printInvoiceFromDetail()">🖨️ In hóa đơn</button>
     </div>
   </div>
 </div>
@@ -1118,25 +1101,16 @@ function renderOrders(data) {
     const conNo = parseFloat(r['Công Nợ']) || 0;
     const trangThai = r['Trạng Thái'] || '';
     const isLate = r._treHan;
-    // Sản phẩm: hiện SP đầu tiên + tổng số
-    const spRaw = r['Chi tiết SP'] || '';
-    const spParts = spRaw.split(',');
-    const spFirst = spParts[0]?.trim() || '--';
-    const spCount = spParts.length;
-    const spLabel = spFirst + (spCount > 1 ? ` <span style="color:var(--blue);font-size:11px;font-weight:700">+${spCount-1} SP</span>` : '');
-    // Ngày giao
-    let ngayGiaoLabel = r['Ngày Giao HH'] || '--';
-    if (isLate) ngayGiaoLabel = `<span style="color:var(--red);font-weight:700">⚠️ ${r['Ngày Giao HH']}</span>`;
     return `<tr ${isLate?'style="background:#FEF2F2"':''}>
       <td><a href="#" style="color:var(--blue);font-weight:700;text-decoration:none" onclick="viewOrder('${r['Mã ĐH']}')">${r['Mã ĐH']}</a></td>
-      <td style="font-size:12px;color:var(--gray-600)">${r['Ngày Tạo']}</td>
-      <td style="font-size:12px">${ngayGiaoLabel}</td>
+      <td style="font-size:12px;color:var(--gray-600)">${fDate(r['Ngày Tạo'])}</td>
+      <td style="font-size:12px">${isLate?'<span style="color:var(--red);font-weight:700">⚠️ '+fDate(r['Ngày Giao HH'])+'</span>':fDate(r['Ngày Giao HH'])}</td>
       <td><div style="font-weight:600">${r['Tên Khách Hàng']}</div><div style="font-size:11px;color:var(--gray-400)">${r['SĐT']||''}</div></td>
-      <td style="font-size:12px;max-width:160px">${spLabel}</td>
+      <td style="font-size:12px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r['Chi tiết SP']||''}</td>
       <td style="font-weight:700;text-align:right">${fVND(r['Tổng Tiền'])}</td>
       <td style="color:var(--green);font-weight:600;text-align:right">${fVND(r['Đã Thanh Toán'])}</td>
       <td style="text-align:right">${conNo>0?`<span style="color:var(--red);font-weight:700">${fVND(conNo)}</span>`:'<span style="color:var(--green)">0đ</span>'}</td>
-      <td>${orderStatusBadge(trangThai)}</td>
+      <td>${statusBadge(trangThai)}</td>
       <td style="font-size:12px">${r['Nhân Viên']||''}</td>
       <td>
         <div style="display:flex;gap:4px">
@@ -1154,40 +1128,33 @@ function filterOrders() {
   const st = document.getElementById('orderStatus').value;
   let data = allOrders.filter(r =>
     (!q || [r['Mã ĐH'],r['Tên Khách Hàng'],r['SĐT'],r['Nhân Viên']].join(' ').toLowerCase().includes(q)) &&
-    (st==='all' || String(r['Trạng Thái']) === st)
+    (st==='all' || String(r['Trạng Thái']).includes(st))
   );
   renderOrders(data);
 }
 
-let _editingOrderId = null;
 function openOrderModal(data = null) {
   cart = [];
-  _editingOrderId = data ? data['Mã ĐH'] : null;
-  document.getElementById('orderModalTitle').textContent = data ? `✏️ Sửa đơn hàng ${data['Mã ĐH']}` : '＋ Tạo đơn hàng mới';
-  // Reset form
-  ['o-tenKH','o-sdt','o-diaChi','o-ghiChu'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  window._editingOrderId = null;
+  // Reset form fields
+  ['o-tenKH','o-sdt','o-diaChi','o-ghiChu'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
   document.getElementById('s-discount').value = 0;
-  document.getElementById('s-tienmat').value = 0;
-  document.getElementById('s-ck').value = 0;
-  // Set datetime-local default = now
+  document.getElementById('s-paid').value = 0;
+  // Ngày giờ mặc định = bây giờ
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  document.getElementById('o-ngayGiao').value = now.toISOString().slice(0,16);
-  document.getElementById('o-loaiGiao').value = 'henngay';
-  toggleLoaiGiao();
-  // Nếu edit: điền dữ liệu
-  if (data) {
-    document.getElementById('o-tenKH').value = data['Tên Khách Hàng'] || '';
-    document.getElementById('o-sdt').value = data['SĐT'] || '';
-    document.getElementById('o-diaChi').value = data['Địa Chỉ Giao'] || '';
-    document.getElementById('o-ghiChu').value = data['Ghi Chú'] || '';
-  }
+  const dtVal = now.toISOString().slice(0,16);
+  const ngayEl = document.getElementById('o-ngayGiao');
+  if (ngayEl) ngayEl.value = dtVal;
+  document.getElementById('orderModalTitle').textContent = '＋ Tạo đơn hàng mới';
   renderCart();
-  loadProductsForOrder();
-  // Load khách hàng để dùng cho autocomplete
+  // Load KH cho autocomplete
   if (!allCustomers.length) {
-    api('GET', { action: 'getKhachHang' }).then(res => { allCustomers = res.data || []; });
+    api('GET', { action:'getKhachHang' }).then(res => { allCustomers = res.data || []; });
   }
+  loadProductsForOrder();
   openModal('orderModal');
 }
 
@@ -1199,27 +1166,12 @@ async function loadProductsForOrder() {
 
 function renderProductGrid(products) {
   const grid = document.getElementById('productGridOrder');
-  const filtered = products.filter(p => !String(p['Trạng Thái']).includes('Ẩn'));
-  if (!filtered.length) { grid.innerHTML = '<div style="color:var(--gray-400);font-size:13px;padding:12px">Không có sản phẩm</div>'; return; }
-  grid.innerHTML = filtered.map(p => {
-    const ton = parseInt(p['Tồn Kho']) || 0;
-    const isHet = ton === 0;
-    const isSap = !isHet && ton <= 2;
-    let stockLabel = `<div class="pc-stock" style="color:var(--green)">Tồn: ${ton} ${p['ĐVT']}</div>`;
-    let cardStyle = '';
-    if (isHet) {
-      stockLabel = `<div class="pc-stock" style="color:var(--red);font-weight:700">⚠️ Hết hàng (đặt NCC)</div>`;
-      cardStyle = 'border-color:#FCA5A5;background:#FEF2F2';
-    } else if (isSap) {
-      stockLabel = `<div class="pc-stock" style="color:#D97706;font-weight:700">⚡ Sắp hết: ${ton} ${p['ĐVT']}</div>`;
-      cardStyle = 'border-color:#FDE68A;background:#FFFBEB';
-    }
-    return `<div class="product-card-sel" style="${cardStyle}" onclick="addToCart('${p['Mã SP']}','${escHtml(p['Tên Sản Phẩm'])}','${p['Danh Mục']}','${p['ĐVT']}',${p['Giá Bán']},${ton})">
+  grid.innerHTML = products.filter(p => !String(p['Trạng Thái']).includes('Hết hàng') && !String(p['Trạng Thái']).includes('Ẩn')).map(p => `
+    <div class="product-card-sel" onclick="addToCart('${p['Mã SP']}','${escHtml(p['Tên Sản Phẩm'])}','${p['Danh Mục']}','${p['ĐVT']}',${p['Giá Bán']},${p['Tồn Kho']})">
       <div class="pc-name">${p['Tên Sản Phẩm']}</div>
       <div class="pc-price">${fVND(p['Giá Bán'])}</div>
-      ${stockLabel}
-    </div>`;
-  }).join('');
+      <div class="pc-stock">Tồn: ${p['Tồn Kho']} ${p['ĐVT']}</div>
+    </div>`).join('') || '<div style="color:var(--gray-400);font-size:13px;padding:12px">Không có sản phẩm</div>';
 }
 
 function filterProductsInOrder() {
@@ -1228,25 +1180,19 @@ function filterProductsInOrder() {
 }
 
 function addToCart(maSP, ten, danhMuc, dvt, gia, ton) {
-  const tonKho = parseInt(ton) || 0;
   const existing = cart.find(c => c.maSP === maSP);
-  if (existing) { existing.soLuong++; }
-  else { cart.push({ maSP, tenSP: ten, danhMuc, dvt, donGia: parseInt(gia), soLuong: 1, tonKho, hetHang: tonKho === 0 }); }
+  if (existing) { existing.soLuong++; } 
+  else { cart.push({ maSP, tenSP: ten, danhMuc, dvt, donGia: parseInt(gia), soLuong: 1, tonKho: parseInt(ton) }); }
   renderCart();
-  if (tonKho === 0) showToast(`⚠️ ${ten} — Hết hàng trong kho! Sẽ cần đặt NCC.`, 'warning');
-  else showToast(`Đã thêm: ${ten}`, 'success');
+  showToast(`Đã thêm: ${ten}`, 'success');
 }
 
 function renderCart() {
   const el = document.getElementById('cartItems');
   if (!cart.length) { el.innerHTML = '<div class="empty-state" style="padding:16px"><div class="emoji" style="font-size:24px">🛒</div><p style="font-size:12px">Chưa có sản phẩm</p></div>'; recalcOrder(); return; }
   el.innerHTML = cart.map((c,i) => `
-    <div class="cart-item" style="${c.hetHang?'background:#FEF2F2;border-radius:6px;padding:6px 4px':''}">
-      <div class="cart-item-name">
-        ${c.tenSP}<br>
-        <span style="font-size:11px;color:var(--gray-400)">${c.dvt}</span>
-        ${c.hetHang?'<br><span style="font-size:10px;color:var(--red);font-weight:700">⚠️ Cần đặt NCC</span>':''}
-      </div>
+    <div class="cart-item">
+      <div class="cart-item-name">${c.tenSP}<br><span style="font-size:11px;color:var(--gray-400)">${c.dvt}</span></div>
       <div class="cart-qty">
         <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
         <input class="qty-input" value="${c.soLuong}" onchange="setQty(${i},this.value)">
@@ -1266,60 +1212,63 @@ function recalcOrder() {
   const total = cart.reduce((s,c) => s + c.donGia * c.soLuong, 0);
   const disc = parseInt(document.getElementById('s-discount').value) || 0;
   const final = total - disc;
-  const tm = parseInt(document.getElementById('s-tienmat').value) || 0;
-  const ck = parseInt(document.getElementById('s-ck').value) || 0;
-  const paid = tm + ck;
+  const paid = parseInt(document.getElementById('s-paid').value) || 0;
   const debt = final - paid;
   document.getElementById('s-total').textContent = fVND(total);
   document.getElementById('s-final').textContent = fVND(final);
-  document.getElementById('s-paid-total').textContent = fVND(paid);
   document.getElementById('s-debt').textContent = fVND(Math.max(0, debt));
   document.getElementById('s-debt').style.color = debt > 0 ? 'var(--red)' : 'var(--green)';
 }
 
+let _isSavingOrder = false; // Chống bấm đúp
+window._editingOrderId = null;
 async function saveOrder(print) {
+  if (_isSavingOrder) { showToast('Đang lưu, vui lòng đợi...', 'warning'); return; }
   const tenKH = document.getElementById('o-tenKH').value.trim();
-  const sdt = document.getElementById('o-sdt').value.trim();
+  // Giữ số 0 đầu SĐT: đảm bảo luôn là string
+  const sdt = String(document.getElementById('o-sdt').value).trim();
   if (!tenKH || !sdt) { showToast('Vui lòng nhập tên và SĐT khách hàng!', 'error'); return; }
   if (!cart.length) { showToast('Giỏ hàng trống! Chọn ít nhất 1 sản phẩm.', 'error'); return; }
-  const loaiGiao = document.getElementById('o-loaiGiao').value;
+  _isSavingOrder = true;
+  // Đổi nút Lưu thành loading
+  const btnLuu = document.querySelector('#orderModal .btn-outline');
+  const btnInLuu = document.querySelector('#orderModal .btn-primary');
+  if (btnLuu) { btnLuu.disabled=true; btnLuu.textContent='⏳ Đang lưu...'; }
+  if (btnInLuu) { btnInLuu.disabled=true; }
   const tongTien = cart.reduce((s,c) => s + c.donGia * c.soLuong, 0);
-  const tm = parseInt(document.getElementById('s-tienmat').value) || 0;
-  const ck = parseInt(document.getElementById('s-ck').value) || 0;
-  const daTT = tm + ck;
-  // Kiểm tra SP hết hàng
-  const spHetHang = cart.filter(c => c.hetHang);
-  if (spHetHang.length > 0 && !confirm(`⚠️ Đơn hàng có ${spHetHang.length} sản phẩm hết hàng:
-${spHetHang.map(s=>s.tenSP).join(', ')}
-
-Cần đặt NCC sau khi tạo đơn. Tiếp tục?`)) return;
-  // Xác định trạng thái
-  const coHetHang = cart.some(c => c.hetHang);
-  let trangThai = 'Chưa giao';
-  if (loaiGiao === 'tumanghang') trangThai = 'Hoàn thành';
-  else if (coHetHang && cart.some(c => !c.hetHang)) trangThai = 'Đã giao 1 phần';
+  const isEdit = !!window._editingOrderId;
   const body = {
-    action: _editingOrderId ? 'updateDonHang' : 'createDonHang',
-    maDH: _editingOrderId,
-    tenKH, sdt,
+    action: isEdit ? 'updateDonHang' : 'createDonHang',
+    maDH: window._editingOrderId || null,
+    tenKH,
+    sdt: sdt.startsWith('0') ? sdt : '0' + sdt, // Đảm bảo số 0 đầu
     diaChi: document.getElementById('o-diaChi').value,
     ngayGiaoHH: document.getElementById('o-ngayGiao').value,
-    loaiGiao: loaiGiao === 'tumanghang' ? '🚶 Tự mang hàng về' : '📅 Hẹn ngày giao',
+    loaiGiao: '📅 Hẹn ngày giao',
     nhanVien: document.getElementById('o-nhanVien').value,
     ghiChu: document.getElementById('o-ghiChu').value,
-    tongTien, giamGia: parseInt(document.getElementById('s-discount').value) || 0,
-    daTT, tienMat: tm, chuyenKhoan: ck,
-    trangThai, chiTiet: cart
+    tongTien,
+    giamGia: parseInt(document.getElementById('s-discount').value) || 0,
+    daTT: parseInt(document.getElementById('s-paid').value) || 0,
+    trangThai: 'Chưa giao',
+    chiTiet: cart
   };
   try {
     const res = await api('POST', body);
     if (res.success || !SCRIPT_URL) {
-      showToast(_editingOrderId ? 'Đã cập nhật đơn hàng!' : `Tạo đơn thành công! ${res.maDH||''}`, 'success');
+      showToast(isEdit ? `Đã cập nhật ${window._editingOrderId}!` : `Tạo đơn thành công! ${res.maDH||''}`, 'success');
+      window._editingOrderId = null;
       closeModal('orderModal');
       loadOrders();
-      if (print) printInvoiceData(body, res.maDH || _editingOrderId || 'DH-NEW');
+      if (print) printInvoiceData(body, res.maDH || body.maDH || 'DH-NEW');
     } else { showToast(res.error || 'Lỗi lưu đơn', 'error'); }
-  } catch(err) { showToast('Lỗi kết nối: ' + err.message, 'error'); }
+  } catch(err) {
+    showToast('Lỗi kết nối: ' + (err.message||err), 'error');
+  } finally {
+    _isSavingOrder = false;
+    if (btnLuu) { btnLuu.disabled=false; btnLuu.textContent='💾 Lưu đơn'; }
+    if (btnInLuu) { btnInLuu.disabled=false; }
+  }
 }
 
 async function deleteOrder(maDH) {
@@ -1923,6 +1872,28 @@ function fVND(n) {
   return num.toLocaleString('vi-VN') + 'đ';
 }
 
+// Format ngày - loại bỏ T, Z, milliseconds thừa
+function fDate(raw) {
+  if (!raw) return '--';
+  const s = String(raw);
+  // Nếu là ISO format: 2026-04-28T00:00:00.000Z
+  if (s.includes('T')) {
+    try {
+      const d = new Date(s);
+      const dd = String(d.getDate()).padStart(2,'0');
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const yyyy = d.getFullYear();
+      const hh = String(d.getHours()).padStart(2,'0');
+      const min = String(d.getMinutes()).padStart(2,'0');
+      // Nếu giờ = 0:00 thì chỉ hiện ngày
+      if (d.getHours() === 0 && d.getMinutes() === 0) return `${dd}/${mm}/${yyyy}`;
+      return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
+    } catch { return s.slice(0,10); }
+  }
+  // Nếu đã là dd/mm/yyyy hoặc dd/mm/yyyy HH:mm → giữ nguyên
+  return s;
+}
+
 function statusBadge(s) {
   if (!s) return '';
   if (s.includes('Hoàn thành')) return '<span class="badge badge-green">🟢 Hoàn thành</span>';
@@ -1963,137 +1934,68 @@ function showConfirmChoice(msg, options) {
 }
 
 function exportExcel(type) { showToast('Xuất Excel qua Google Sheets → File → Download', 'info'); }
-function editOrder(id) {
+function viewOrder(id) { showToast(`Xem chi tiết đơn ${id}`, 'info'); }
+async function editOrder(id) {
   const order = allOrders.find(r => r['Mã ĐH'] === id);
   if (!order) { showToast('Không tìm thấy đơn hàng!', 'error'); return; }
-  openOrderModal(order);
-}
-
-function viewOrder(id) {
-  const order = allOrders.find(r => r['Mã ĐH'] === id);
-  if (!order) return;
-  document.getElementById('orderDetailTitle').textContent = `Chi tiết đơn hàng ${id}`;
-  // Lấy chi tiết sản phẩm từ CHI_TIET_DON nếu có, hoặc parse từ Chi tiết SP
-  const spRaw = order['Chi tiết SP'] || '';
-  document.getElementById('orderDetailContent').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-      <div>
-        <div style="font-size:11px;color:var(--gray-400);font-weight:600;margin-bottom:4px">KHÁCH HÀNG</div>
-        <div style="font-weight:700;font-size:15px">${order['Tên Khách Hàng']}</div>
-        <div style="color:var(--gray-600);font-size:13px">${order['SĐT']||''}</div>
-        <div style="color:var(--gray-600);font-size:12px;margin-top:4px">${order['Địa Chỉ Giao']||''}</div>
-      </div>
-      <div>
-        <div style="font-size:11px;color:var(--gray-400);font-weight:600;margin-bottom:4px">ĐƠN HÀNG</div>
-        <div style="font-size:13px">Ngày tạo: <strong>${order['Ngày Tạo']}</strong></div>
-        <div style="font-size:13px">Ngày giao: <strong>${order['Ngày Giao HH']||'--'}</strong></div>
-        <div style="font-size:13px">Loại: <strong>${order['Loại Giao']||'--'}</strong></div>
-        <div style="font-size:13px">Nhân viên: <strong>${order['Nhân Viên']||'--'}</strong></div>
-        <div style="margin-top:6px">${orderStatusBadge(order['Trạng Thái'])}</div>
-      </div>
-    </div>
-    <div style="background:var(--gray-50);border-radius:8px;padding:14px;margin-bottom:12px">
-      <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px;text-transform:uppercase">Danh sách sản phẩm</div>
-      <table style="width:100%;font-size:13px;border-collapse:collapse">
-        <thead><tr style="background:var(--navy);color:#fff"><th style="padding:8px 10px;text-align:left">Sản phẩm</th><th style="padding:8px 10px;text-align:center">SL</th><th style="padding:8px 10px;text-align:right">Đơn giá</th><th style="padding:8px 10px;text-align:right">Thành tiền</th></tr></thead>
-        <tbody id="orderDetailSPBody"><tr><td colspan="4" style="padding:12px;text-align:center;color:var(--gray-400)">Đang tải chi tiết sản phẩm...</td></tr></tbody>
-      </table>
-    </div>
-    <div class="summary-box">
-      <div class="summary-row"><span>Tổng tiền hàng</span><span style="font-weight:700">${fVND(order['Tổng Tiền'])}</span></div>
-      ${parseFloat(order['Giảm Giá']||0)>0?`<div class="summary-row"><span>Giảm giá</span><span style="color:var(--red)">-${fVND(order['Giảm Giá'])}</span></div>`:''}
-      <div class="summary-row total"><span>THỰC THU</span><span style="color:var(--blue)">${fVND(order['Thực Thu'])}</span></div>
-      <div class="summary-row"><span>Đã thanh toán</span><span style="color:var(--green);font-weight:700">${fVND(order['Đã Thanh Toán'])}</span></div>
-      ${parseFloat(order['Công Nợ']||0)>0?`<div class="summary-row debt"><span>⚠️ Công nợ còn lại</span><span style="color:var(--red);font-weight:800">${fVND(order['Công Nợ'])}</span></div>`:''}
-      ${order['Ghi Chú']?`<div style="margin-top:10px;padding:8px;background:#f8f9fa;border-radius:6px;font-size:12px;color:var(--gray-600)">📝 ${order['Ghi Chú']}</div>`:''}
-    </div>`;
-  openModal('orderDetailModal');
-  // Tải chi tiết SP từ API
-  api('GET', { action:'getChiTietDon', maDH: id }).then(res => {
-    const spData = res.data || [];
-    const tbody = document.getElementById('orderDetailSPBody');
-    if (!tbody) return;
-    if (!spData.length) {
-      // Parse từ chuỗi Chi tiết SP nếu không có API data
-      tbody.innerHTML = spRaw ? spRaw.split(',').map((sp,i) => `<tr style="background:${i%2?'var(--gray-50)':'#fff'}"><td style="padding:8px 10px">${sp.trim()}</td><td style="padding:8px 10px;text-align:center">--</td><td style="padding:8px 10px;text-align:right">--</td><td style="padding:8px 10px;text-align:right">--</td></tr>`).join('') : '<tr><td colspan="4" style="padding:12px;text-align:center;color:var(--gray-400)">Chưa có dữ liệu chi tiết</td></tr>';
-    } else {
-      tbody.innerHTML = spData.map((sp,i) => `<tr style="background:${i%2?'var(--gray-50)':'#fff'}">
-        <td style="padding:8px 10px;font-weight:500">${sp['Tên Sản Phẩm']||sp['Tên SP']||''}</td>
-        <td style="padding:8px 10px;text-align:center">${sp['Số Lượng']||sp['SL']||''}</td>
-        <td style="padding:8px 10px;text-align:right">${fVND(sp['Đơn Giá']||0)}</td>
-        <td style="padding:8px 10px;text-align:right;font-weight:700">${fVND(sp['Thành Tiền']||0)}</td>
-      </tr>`).join('');
-    }
-  }).catch(() => {});
-}
-
-let _printOrderData = null;
-function printInvoiceFromDetail() {
-  if (_printOrderData) printInvoice(_printOrderData);
-}
-
-// Badge trạng thái mới cho đơn hàng
-function orderStatusBadge(s) {
-  if (!s) return '';
-  if (s.includes('Hoàn thành')) return '<span class="badge badge-green">🟢 Hoàn thành</span>';
-  if (s.includes('Đã giao 1 phần')) return '<span class="badge badge-yellow">🟡 Đã giao 1 phần</span>';
-  if (s.includes('Chưa giao')) return '<span class="badge badge-gray">⬜ Chưa giao</span>';
-  if (s.includes('Hủy')) return '<span class="badge badge-red">🔴 Đã hủy</span>';
-  return `<span class="badge badge-gray">${s}</span>`;
-}
-
-// Toggle loại giao
-function toggleLoaiGiao() {
-  const val = document.getElementById('o-loaiGiao').value;
-  const wrap = document.getElementById('o-ngayGiaoWrap');
-  if (val === 'tumanghang') {
-    wrap.style.opacity = '0.5';
-    wrap.querySelector('label').textContent = 'Ngày giao (tự mang)';
-  } else {
-    wrap.style.opacity = '1';
-    wrap.querySelector('label').textContent = 'Ngày & Giờ giao hàng *';
+  cart = [];
+  // Mở modal trước để user thấy ngay
+  document.getElementById('orderModalTitle').textContent = `✏️ Sửa đơn hàng ${id}`;
+  // Điền thông tin KH
+  document.getElementById('o-tenKH').value = order['Tên Khách Hàng'] || '';
+  document.getElementById('o-sdt').value = order['SĐT'] || '';
+  document.getElementById('o-diaChi').value = order['Địa Chỉ Giao'] || '';
+  document.getElementById('o-ghiChu').value = order['Ghi Chú'] || '';
+  document.getElementById('o-nhanVien').value = order['Nhân Viên'] || 'Admin';
+  document.getElementById('s-discount').value = parseInt(order['Giảm Giá']) || 0;
+  document.getElementById('s-paid').value = parseInt(order['Đã Thanh Toán']) || 0;
+  // Ngày giao: chuyển về datetime-local
+  const rawDate = order['Ngày Giao HH'] || '';
+  if (rawDate) {
+    try {
+      let dtVal = '';
+      if (rawDate.includes('T')) {
+        dtVal = rawDate.slice(0,16);
+      } else if (rawDate.includes('/')) {
+        // dd/mm/yyyy hoặc dd/mm/yyyy HH:mm
+        const parts = rawDate.split(' ');
+        const dp = parts[0].split('/');
+        const tp = parts[1] ? parts[1] : '00:00';
+        if (dp.length === 3) dtVal = `${dp[2]}-${dp[1]}-${dp[0]}T${tp}`;
+      }
+      if (dtVal) document.getElementById('o-ngayGiao').value = dtVal;
+    } catch(e) {}
   }
-}
-
-// Tìm kiếm khách hàng theo tên
-function searchKHByName(q) {
-  const suggest = document.getElementById('kh-suggest-name');
-  if (!q || q.length < 2) { suggest.style.display = 'none'; return; }
-  const matches = allCustomers.filter(c => (c['Tên KH']||'').toLowerCase().includes(q.toLowerCase())).slice(0, 6);
-  if (!matches.length) { suggest.style.display = 'none'; return; }
-  suggest.style.display = 'block';
-  suggest.innerHTML = matches.map(c => `
-    <div style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--gray-100)" 
-         onmousedown="fillKH('${escHtml(c['Tên KH'])}','${c['SĐT']||''}','${escHtml(c['Địa Chỉ']||'')}')"
-         onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='#fff'">
-      <div style="font-weight:600">${c['Tên KH']}</div>
-      <div style="font-size:11px;color:var(--gray-400)">${c['SĐT']||''} — ${c['Địa Chỉ']||''}</div>
-    </div>`).join('');
-}
-
-// Tìm kiếm khách hàng theo SĐT
-function searchKHBySdt(q) {
-  const suggest = document.getElementById('kh-suggest-sdt');
-  if (!q || q.length < 6) { suggest.style.display = 'none'; return; }
-  const matches = allCustomers.filter(c => (c['SĐT']||'').includes(q)).slice(0, 6);
-  if (!matches.length) { suggest.style.display = 'none'; return; }
-  suggest.style.display = 'block';
-  suggest.innerHTML = matches.map(c => `
-    <div style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--gray-100)"
-         onmousedown="fillKH('${escHtml(c['Tên KH'])}','${c['SĐT']||''}','${escHtml(c['Địa Chỉ']||'')}')"
-         onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='#fff'">
-      <div style="font-weight:600">${c['Tên KH']} — ${c['SĐT']||''}</div>
-      <div style="font-size:11px;color:var(--gray-400)">${c['Địa Chỉ']||''}</div>
-    </div>`).join('');
-}
-
-// Điền thông tin KH vào form
-function fillKH(ten, sdt, diaChi) {
-  document.getElementById('o-tenKH').value = ten;
-  document.getElementById('o-sdt').value = sdt;
-  document.getElementById('o-diaChi').value = diaChi;
-  document.getElementById('kh-suggest-name').style.display = 'none';
-  document.getElementById('kh-suggest-sdt').style.display = 'none';
+  renderCart();
+  openModal('orderModal');
+  // Ghi nhớ ID đang sửa
+  window._editingOrderId = id;
+  // Load danh sách SP
+  loadProductsForOrder();
+  // Load chi tiết SP vào giỏ hàng
+  try {
+    showToast('Đang tải chi tiết đơn hàng...', 'info');
+    const res = await api('GET', { action: 'getChiTietDon', maDH: id });
+    const chiTiet = res.data || [];
+    if (chiTiet.length > 0) {
+      cart = chiTiet.map(sp => ({
+        maSP: sp['Mã SP'] || '',
+        tenSP: sp['Tên Sản Phẩm'] || sp['Tên SP'] || '',
+        danhMuc: sp['Danh Mục'] || '',
+        dvt: sp['ĐVT'] || '',
+        donGia: parseInt(sp['Đơn Giá']) || 0,
+        soLuong: parseInt(sp['Số Lượng'] || sp['SL']) || 1,
+        tonKho: 99,
+        hetHang: false
+      }));
+      renderCart();
+      showToast(`Đã tải ${chiTiet.length} sản phẩm vào giỏ!`, 'success');
+    } else {
+      showToast('Chưa có chi tiết SP trong CSDL — thêm thủ công vào giỏ', 'warning');
+    }
+  } catch(e) {
+    showToast('Không tải được chi tiết SP: ' + e.message, 'error');
+  }
 }
 function editProduct(id) { showToast(`Sửa SP ${id} — đang phát triển`, 'info'); }
 async function deleteProduct(id) { if (!confirm(`Ẩn sản phẩm ${id}?`)) return; await api('POST', { action:'deleteSanPham', maSP:id }); showToast('Đã ẩn sản phẩm', 'success'); loadProducts(); }
@@ -2102,7 +2004,65 @@ function updateSOStatus(id) { showToast(`Cập nhật trạng thái ${id} — cl
 function payImport(id) { showToast(`Thanh toán phiếu ${id} — đang phát triển trong v1.1`, 'info'); }
 function deleteExpense(id) { if (!confirm('Xóa chi phí này?')) return; showToast('Đã xóa chi phí', 'success'); loadExpenses(); }
 function toggleDeliveryType() { const v = document.getElementById('d-hinhThuc').value; document.getElementById('d-dvLabel').textContent = v.includes('Tự') ? 'Nhân viên giao' : 'Đối tác vận chuyển'; }
-function searchCustomerAuto() { /* auto-fill from customer DB */ }
+// Tìm KH theo tên
+function searchKHByName(q) {
+  const s = document.getElementById('kh-suggest-name');
+  if (!s) return;
+  if (!q || q.length < 1) { s.style.display='none'; return; }
+  const matches = allCustomers.filter(c =>
+    (c['Tên KH']||'').toLowerCase().includes(q.toLowerCase())
+  ).slice(0,6);
+  if (!matches.length) { s.style.display='none'; return; }
+  s.style.display='block';
+  s.innerHTML = matches.map(c => `
+    <div style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--gray-100)"
+         onmousedown="fillKHForm('${escHtml(c['Tên KH']||'')}','${c['SĐT']||''}','${escHtml(c['Địa Chỉ']||'')}')">
+      <div style="font-weight:600">${c['Tên KH']}</div>
+      <div style="font-size:11px;color:var(--gray-400)">${c['SĐT']||''} ${c['Địa Chỉ']?'— '+c['Địa Chỉ']:''}</div>
+    </div>`).join('');
+}
+
+// Tìm KH theo SĐT
+function searchKHBySdt(q) {
+  const s = document.getElementById('kh-suggest-sdt');
+  if (!s) return;
+  if (!q || q.length < 4) { s.style.display='none'; return; }
+  const matches = allCustomers.filter(c =>
+    (c['SĐT']||'').includes(q)
+  ).slice(0,6);
+  if (!matches.length) { s.style.display='none'; return; }
+  s.style.display='block';
+  s.innerHTML = matches.map(c => `
+    <div style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--gray-100)"
+         onmousedown="fillKHForm('${escHtml(c['Tên KH']||'')}','${c['SĐT']||''}','${escHtml(c['Địa Chỉ']||'')}')">
+      <div style="font-weight:600">${c['Tên KH']} — ${c['SĐT']||''}</div>
+      <div style="font-size:11px;color:var(--gray-400)">${c['Địa Chỉ']||''}</div>
+    </div>`).join('');
+}
+
+// Điền thông tin KH vào form + ẩn dropdown
+function fillKHForm(ten, sdt, diaChi) {
+  document.getElementById('o-tenKH').value = ten;
+  document.getElementById('o-sdt').value = sdt;
+  document.getElementById('o-diaChi').value = diaChi;
+  const sn = document.getElementById('kh-suggest-name');
+  const ss = document.getElementById('kh-suggest-sdt');
+  if (sn) sn.style.display='none';
+  if (ss) ss.style.display='none';
+}
+
+// Đóng dropdown khi click ra ngoài
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#o-tenKH') && !e.target.closest('#kh-suggest-name')) {
+    const el = document.getElementById('kh-suggest-name');
+    if (el) el.style.display='none';
+  }
+  if (!e.target.closest('#o-sdt') && !e.target.closest('#kh-suggest-sdt')) {
+    const el = document.getElementById('kh-suggest-sdt');
+    if (el) el.style.display='none';
+  }
+});
+function searchCustomerAuto() {}
 </script>
 </body>
 </html>
