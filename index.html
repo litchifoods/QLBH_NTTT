@@ -383,6 +383,7 @@ tbody td{padding:10px 12px;vertical-align:middle}
             </table>
           </div>
         </div>
+        <div id="orderPagination" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:12px"></div>
       </div>
 
       <!-- GIAO HÀNG -->
@@ -798,19 +799,20 @@ tbody td{padding:10px 12px;vertical-align:middle}
             <option value="🤝 Thuê đối tác vận chuyển">🤝 Thuê đối tác vận chuyển</option>
           </select>
         </div>
-        <div class="form-group">
-          <label id="d-dvLabel">Nhân viên giao *</label>
-          <select id="d-dvNvGiao">
-            <option value="">-- Chọn nhân viên --</option>
-            <option>Admin - Chủ Cửa Hàng</option>
-            <option>Nguyễn Văn Tuấn</option>
-            <option>Trần Thị Mai</option>
-            <option value="other">Khác (nhập tên)</option>
-          </select>
-        </div>
-        <div class="form-group" id="d-dvOtherWrap" style="display:none">
-          <label>Tên đối tác / NV khác</label>
-          <input id="d-dvOther" placeholder="Tên đối tác vận chuyển...">
+        <div class="form-group span-3">
+          <label id="d-dvLabel">Nhân viên / Đối tác giao hàng * <span style="font-size:11px;color:var(--gray-400)">(có thể chọn nhiều người)</span></label>
+          <div style="background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:7px;padding:10px">
+            <div id="d-nvCheckList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:5px 10px;background:#fff;border-radius:6px;border:1px solid var(--gray-200)"><input type="checkbox" value="Admin - Chủ Cửa Hàng" onchange="updateNVLabel()"> Admin - Chủ CỬa Hàng</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:5px 10px;background:#fff;border-radius:6px;border:1px solid var(--gray-200)"><input type="checkbox" value="Nguyễn Văn Tuấn" onchange="updateNVLabel()"> Nguyễn Văn Tuấn</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:5px 10px;background:#fff;border-radius:6px;border:1px solid var(--gray-200)"><input type="checkbox" value="Trần Thị Mai" onchange="updateNVLabel()"> Trần Thị Mai</label>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input id="d-nvExtra" placeholder="Thêm đối tác / CTV bên ngoài..." style="flex:1;padding:6px 10px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;font-family:inherit" oninput="updateNVLabel()">
+              <span style="font-size:11px;color:var(--gray-400)">CTV/Đối tác</span>
+            </div>
+            <div id="d-nvSelected" style="margin-top:8px;font-size:12px;color:var(--blue);font-weight:600;min-height:18px"></div>
+          </div>
         </div>
         <div class="form-group"><label>Phí vận chuyển (đ)</label><input type="number" id="d-phiVC" value="0" min="0"></div>
         <div class="form-group"><label>Phí lắp đặt (đ)</label><input type="number" id="d-phiLapDat" value="0" min="0"></div>
@@ -1303,12 +1305,34 @@ async function loadDashboard() {
 }
 
 // ─── ORDERS ────────────────────────────────────────────────────
-async function loadOrders() {
+// Cache layer - tránh gọi API liên tục
+const _cache = {};
+function setCache(key, data, ttlSec=300) {
+  _cache[key] = { data, exp: Date.now() + ttlSec*1000 };
+}
+function getCache(key) {
+  const c = _cache[key];
+  return (c && Date.now() < c.exp) ? c.data : null;
+}
+function clearCache(key) { delete _cache[key]; }
+
+async function loadOrders(forceRefresh=false) {
   try {
-    const res = await api('GET', { action:'getDonHang' });
-    allOrders = res.data || [];
+    const cached = !forceRefresh && getCache('orders');
+    const res = cached || await api('GET', { action:'getDonHang' });
+    if (!cached) setCache('orders', res);
+    // Đảo ngược: mới nhất lên đầu
+    allOrders = (res.data || []).slice().reverse();
     renderOrders(allOrders);
+    // Phân trang
+    renderPagination('orderPagination', allOrders.length, _orderPage, (p)=>{ _orderPage=p; renderOrderPage(); });
   } catch(e) { console.error(e); }
+}
+let _orderPage = 1;
+const PAGE_SIZE = 25;
+function renderOrderPage() {
+  const start = (_orderPage-1)*PAGE_SIZE;
+  renderOrders(allOrders.slice(start, start+PAGE_SIZE));
 }
 
 function renderOrders(data) {
@@ -1353,11 +1377,18 @@ function renderOrders(data) {
 function filterOrders() {
   const q = document.getElementById('orderSearch').value.toLowerCase();
   const st = document.getElementById('orderStatus').value;
-  let data = allOrders.filter(r =>
+  const filtered = allOrders.filter(r =>
     (!q || [r['Mã ĐH'],r['Tên Khách Hàng'],r['SĐT'],r['Nhân Viên']].join(' ').toLowerCase().includes(q)) &&
     (st==='all' || String(r['Trạng Thái']) === st)
   );
-  renderOrders(data);
+  _orderPage = 1;
+  const start = 0;
+  renderOrders(filtered.slice(start, PAGE_SIZE));
+  renderPagination('orderPagination', filtered.length, 1, (p)=>{
+    _orderPage=p;
+    renderOrders(filtered.slice((p-1)*PAGE_SIZE, p*PAGE_SIZE));
+    renderPagination('orderPagination', filtered.length, p, arguments.callee);
+  });
 }
 
 let _editingOrderId = null;
@@ -1508,8 +1539,8 @@ Cần đặt NCC sau khi tạo đơn. Tiếp tục?`)) return;
   let trangThai = 'Chưa giao';
   if (loaiGiao === 'tumanghang') trangThai = 'Hoàn thành';
   else if (coHetHang && cart.some(c => !c.hetHang)) trangThai = 'Đã giao 1 phần';
-  // Đảm bảo SĐT giữ số 0 đầu
-  const sdtFinal = sdt.startsWith('0') ? sdt : (sdt.length === 9 ? '0'+sdt : sdt);
+  // Đảm bảo SĐT giữ số 0 đầu - xử lý triệt để
+  const sdtFinal = fixSdt(sdt);
   const body = {
     action: _editingOrderId ? 'updateDonHang' : 'createDonHang',
     maDH: _editingOrderId,
@@ -1568,10 +1599,12 @@ async function loadDelivery() {
       !String(r['Trạng Thái']).includes('Hoàn thành') &&
       !String(r['Trạng Thái']).includes('Hủy')
     );
-    allDeliveries = donHang;
+    // Đảo ngược: mới nhất lên đầu
+    const donHangRev = donHang.slice().reverse();
+    allDeliveries = donHangRev;
     // Map GH data vào đơn hàng
     const ghData = resGH.data || [];
-    allDeliveries = donHang.map(d => {
+    allDeliveries = donHangRev.map(d => {
       const gh = ghData.filter(g => g['Mã ĐH'] === d['Mã ĐH']);
       const latestGH = gh.length ? gh[gh.length-1] : null;
       return {
@@ -1628,8 +1661,7 @@ function renderDelivery(data) {
       <td style="text-align:right;font-size:12px">${r._phiLapDat>0?fVND(r._phiLapDat):'--'}</td>
       <td>
         <div style="display:flex;gap:4px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="openDeliveryDetail('${r['Mã ĐH']}')">📦 Xem</button>
-          <button class="btn btn-outline btn-sm" onclick="openUpdateDelivery('${r._maGH||''}','${r['Mã ĐH']}','${r._trangThaiGiao}')">📝 Cập nhật</button>
+          <button class="btn btn-primary btn-sm" id="btnGH_${r['Mã ĐH']}" onclick="openDeliveryDetailWithLoad('${r['Mã ĐH']}',this)">🚚 Giao hàng & đối soát</button>
           <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="openCancelFromTable('${r['Mã ĐH']}')">🚫</button>
         </div>
       </td>
@@ -1645,6 +1677,23 @@ function filterDelivery() {
     (st==='all' || r._trangThaiGiao === st)
   );
   renderDelivery(data);
+}
+
+// Wrapper với loading state để tránh bấm nhiều lần
+const _loadingDH = new Set();
+async function openDeliveryDetailWithLoad(maDH, btn) {
+  if (_loadingDH.has(maDH)) return;
+  _loadingDH.add(maDH);
+  const orig = btn.innerHTML;
+  btn.innerHTML = '⏳ Đang tải...';
+  btn.disabled = true;
+  try {
+    await openDeliveryDetail(maDH);
+  } finally {
+    btn.innerHTML = orig;
+    btn.disabled = false;
+    _loadingDH.delete(maDH);
+  }
 }
 
 // Mở popup chi tiết đơn hàng cần giao
@@ -1755,7 +1804,30 @@ function openDeliveryModal() {
   document.getElementById('d-phiVC').value = 0;
   document.getElementById('d-phiLapDat').value = 0;
   document.getElementById('d-ghiChu').value = '';
+  resetNVSelection();
   openModal('deliveryModal');
+}
+
+function updateNVLabel() {
+  const checked = [...document.querySelectorAll('#d-nvCheckList input[type=checkbox]:checked')].map(c=>c.value);
+  const extra = document.getElementById('d-nvExtra')?.value.trim();
+  if (extra) checked.push(extra);
+  const el = document.getElementById('d-nvSelected');
+  if (el) el.textContent = checked.length ? '✅ Đã chọn: ' + checked.join(', ') : '';
+}
+
+function getSelectedNV() {
+  const checked = [...document.querySelectorAll('#d-nvCheckList input[type=checkbox]:checked')].map(c=>c.value);
+  const extra = document.getElementById('d-nvExtra')?.value.trim();
+  if (extra) checked.push(extra);
+  return checked.join(', ');
+}
+
+function resetNVSelection() {
+  document.querySelectorAll('#d-nvCheckList input[type=checkbox]').forEach(c => c.checked=false);
+  const ex = document.getElementById('d-nvExtra');
+  if (ex) ex.value = '';
+  updateNVLabel();
 }
 
 function toggleDeliveryType() {
@@ -1776,11 +1848,8 @@ function toggleDeliveryType() {
 async function saveDelivery() {
   const maDH = document.getElementById('d-maDH').value.trim();
   if (!maDH) { showToast('Vui lòng nhập Mã đơn hàng!', 'error'); return; }
-  const selNV = document.getElementById('d-dvNvGiao');
-  const dvNvGiao = selNV.value === 'other'
-    ? document.getElementById('d-dvOther').value
-    : selNV.value;
-  if (!dvNvGiao) { showToast('Vui lòng chọn nhân viên / đối tác giao!', 'error'); return; }
+  const dvNvGiao = getSelectedNV();
+  if (!dvNvGiao) { showToast('Vui lòng chọn ít nhất 1 nhân viên / đối tác giao!', 'error'); return; }
   const spGiao = document.getElementById('d-spSelected').textContent;
   try {
     await api('POST', {
@@ -2412,6 +2481,17 @@ function fVND(n) {
   return num.toLocaleString('vi-VN') + 'đ';
 }
 
+// Đảm bảo SĐT luôn có số 0 đầu
+function fixSdt(s) {
+  const digits = String(s||'').replace(/\D/g,'');
+  if (!digits) return s;
+  if (digits.length === 9) return '0' + digits;
+  if (digits.length === 10 && digits.startsWith('0')) return digits;
+  if (digits.length === 10) return digits;
+  if (digits.length === 11 && digits.startsWith('0')) return digits;
+  return digits.startsWith('0') ? digits : '0' + digits;
+}
+
 function fDate(raw) {
   if (!raw) return '--';
   const s = String(raw).trim();
@@ -2431,6 +2511,23 @@ function fDate(raw) {
     } catch { return s.split('T')[0]; }
   }
   return s;
+}
+
+// Phân trang chung
+function renderPagination(containerId, total, currentPage, onPageChange) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  if (totalPages <= 1) { el.innerHTML = `<span style="font-size:12px;color:var(--gray-400)">Tổng: ${total} bản ghi</span>`; return; }
+  let btns = `<span style="font-size:12px;color:var(--gray-400);margin-right:8px">Tổng: ${total} | Trang ${currentPage}/${totalPages}</span>`;
+  if (currentPage > 1) btns += `<button class="btn btn-ghost btn-sm" onclick="(${onPageChange.toString()})(${currentPage-1})">‹ Trước</button>`;
+  const start = Math.max(1, currentPage-2);
+  const end = Math.min(totalPages, currentPage+2);
+  for (let i=start; i<=end; i++) {
+    btns += `<button class="btn btn-sm ${i===currentPage?'btn-primary':'btn-ghost'}" onclick="(${onPageChange.toString()})(${i})">${i}</button>`;
+  }
+  if (currentPage < totalPages) btns += `<button class="btn btn-ghost btn-sm" onclick="(${onPageChange.toString()})(${currentPage+1})">Sau ›</button>`;
+  el.innerHTML = btns;
 }
 
 function statusBadge(s) {
@@ -2652,6 +2749,28 @@ function editCustomer(id) { showToast('Sửa khách hàng — đang phát triể
 function updateSOStatus(id) { showToast(`Cập nhật trạng thái ${id} — click để chuyển trạng thái tiếp theo`, 'info'); }
 function payImport(id) { showToast(`Thanh toán phiếu ${id} — đang phát triển trong v1.1`, 'info'); }
 function deleteExpense(id) { if (!confirm('Xóa chi phí này?')) return; showToast('Đã xóa chi phí', 'success'); loadExpenses(); }
+function updateNVLabel() {
+  const checked = [...document.querySelectorAll('#d-nvCheckList input[type=checkbox]:checked')].map(c=>c.value);
+  const extra = document.getElementById('d-nvExtra')?.value.trim();
+  if (extra) checked.push(extra);
+  const el = document.getElementById('d-nvSelected');
+  if (el) el.textContent = checked.length ? '✅ Đã chọn: ' + checked.join(', ') : '';
+}
+
+function getSelectedNV() {
+  const checked = [...document.querySelectorAll('#d-nvCheckList input[type=checkbox]:checked')].map(c=>c.value);
+  const extra = document.getElementById('d-nvExtra')?.value.trim();
+  if (extra) checked.push(extra);
+  return checked.join(', ');
+}
+
+function resetNVSelection() {
+  document.querySelectorAll('#d-nvCheckList input[type=checkbox]').forEach(c => c.checked=false);
+  const ex = document.getElementById('d-nvExtra');
+  if (ex) ex.value = '';
+  updateNVLabel();
+}
+
 function toggleDeliveryType() { const v = document.getElementById('d-hinhThuc').value; document.getElementById('d-dvLabel').textContent = v.includes('Tự') ? 'Nhân viên giao' : 'Đối tác vận chuyển'; }
 function searchCustomerAuto() {}
 
