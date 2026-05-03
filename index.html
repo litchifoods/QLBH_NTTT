@@ -808,27 +808,32 @@ tbody td{padding:10px 12px;vertical-align:middle}
           </select>
         </div>
       </div>
-      <!-- Nhân viên cửa hàng -->
+      <!-- Người thực hiện giao hàng -->
       <div class="form-section">
-        <div class="form-section-title">👤 Nhân viên cửa hàng tham gia giao/lắp đặt</div>
-        <div id="gh-nvList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">
-          <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:5px 12px;background:#fff;border-radius:20px;border:1.5px solid var(--gray-200)">
-            <input type="checkbox" value="Admin"> Admin - Chủ CH</label>
-          <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:5px 12px;background:#fff;border-radius:20px;border:1.5px solid var(--gray-200)">
-            <input type="checkbox" value="Nguyễn Văn Tuấn"> Nguyễn Văn Tuấn</label>
-          <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:5px 12px;background:#fff;border-radius:20px;border:1.5px solid var(--gray-200)">
-            <input type="checkbox" value="Trần Thị Mai"> Trần Thị Mai</label>
-        </div>
-      </div>
-      <!-- Đối tác thuê ngoài -->
-      <div class="form-section">
-        <div class="form-section-title">🤝 Đối tác / CTV thuê ngoài <span style="font-size:11px;font-weight:400;color:var(--gray-400)">(nếu có)</span></div>
-        <div style="display:flex;flex-direction:column;gap:8px" id="gh-doiTacList">
-          <div style="display:flex;gap:8px;align-items:center">
-            <input placeholder="Tên đối tác / CTV 1" style="flex:1;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:13px;font-family:inherit">
-            <button class="btn btn-ghost btn-sm" onclick="addDoiTacRow()" style="white-space:nowrap">+ Thêm người</button>
+        <div class="form-section-title">👥 Người thực hiện giao hàng & lắp đặt <span style="font-weight:400;font-size:11px;color:var(--gray-400)">(chọn NV cửa hàng và/hoặc nhập CTV)</span></div>
+        <!-- NV cửa hàng -->
+        <div style="margin-bottom:10px">
+          <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px">🏠 Nhân viên cửa hàng:</div>
+          <div id="gh-nvList" style="display:flex;flex-wrap:wrap;gap:8px">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;padding:6px 14px;background:#EFF6FF;border-radius:20px;border:1.5px solid var(--blue-light);user-select:none">
+              <input type="checkbox" value="Admin - Chủ CH" style="accent-color:var(--blue)" onchange="getSelectedGHNV()"> Admin - Chủ CH</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;padding:6px 14px;background:#EFF6FF;border-radius:20px;border:1.5px solid var(--blue-light);user-select:none">
+              <input type="checkbox" value="Nguyễn Văn Tuấn" style="accent-color:var(--blue)" onchange="getSelectedGHNV()"> Nguyễn Văn Tuấn</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;padding:6px 14px;background:#EFF6FF;border-radius:20px;border:1.5px solid var(--blue-light);user-select:none">
+              <input type="checkbox" value="Trần Thị Mai" style="accent-color:var(--blue)" onchange="getSelectedGHNV()"> Trần Thị Mai</label>
           </div>
         </div>
+        <!-- CTV / Đối tác ngoài -->
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px">🤝 CTV / Đối tác thuê ngoài: <span style="font-weight:400;color:var(--gray-400)">(nhập tên, có thể nhiều người)</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px" id="gh-doiTacList">
+            <div style="display:flex;gap:8px;align-items:center">
+              <input placeholder="Tên CTV / đối tác..." style="flex:1;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:13px;font-family:inherit;outline:none" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--gray-200)'">
+              <button class="btn btn-ghost btn-sm" onclick="addDoiTacRow()" style="white-space:nowrap;flex-shrink:0">＋ Thêm người</button>
+            </div>
+          </div>
+        </div>
+        <div id="gh-nvSummary" style="margin-top:10px;padding:8px 12px;background:var(--gray-50);border-radius:6px;font-size:12px;color:var(--blue);font-weight:600;min-height:24px;display:none"></div>
       </div>
       <div class="form-group">
         <label>Ghi chú (tầng, yêu cầu đặc biệt...)</label>
@@ -1745,12 +1750,11 @@ async function loadDelivery(forceRefresh=false) {
       !String(r['Trạng Thái']).includes('Hoàn thành') &&
       !String(r['Trạng Thái']).includes('Hủy')
     );
-    // Đảo ngược: mới nhất lên đầu
-    const donHangRev = donHang.slice().reverse();
-    allDeliveries = donHangRev;
+    // Đơn mới nhất lên đầu (server đã sắp xếp đúng, không reverse thêm)
+    allDeliveries = donHang;
     // Map GH data vào đơn hàng
     const ghData = resGH.data || [];
-    allDeliveries = donHangRev.map(d => {
+    allDeliveries = donHang.map(d => {
       const gh = ghData.filter(g => g['Mã ĐH'] === d['Mã ĐH']);
       const latestGH = gh.length ? gh[gh.length-1] : null;
       return {
@@ -1835,8 +1839,8 @@ function addDoiTacRow() {
   const list = document.getElementById('gh-doiTacList');
   const div = document.createElement('div');
   div.style.cssText = 'display:flex;gap:8px;align-items:center';
-  div.innerHTML = `<input placeholder="Tên đối tác / CTV" style="flex:1;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:13px;font-family:inherit">
-    <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="this.parentElement.remove()">✕</button>`;
+  div.innerHTML = `<input placeholder="Tên CTV / đối tác..." style="flex:1;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:13px;font-family:inherit;outline:none" oninput="getSelectedGHNV()" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--gray-200)'">
+    <button class="btn btn-ghost btn-sm" style="color:var(--red);flex-shrink:0" onclick="this.parentElement.remove();getSelectedGHNV()">✕</button>`;
   list.appendChild(div);
 }
 
@@ -1851,7 +1855,18 @@ function getSelectedGHSP() {
 function getSelectedGHNV() {
   const nvArr = [...document.querySelectorAll('#gh-nvList input[type=checkbox]:checked')].map(c=>c.value);
   const dtArr = [...document.querySelectorAll('#gh-doiTacList input[type=text]')].map(c=>c.value.trim()).filter(Boolean);
-  return [...nvArr, ...dtArr].join(', ');
+  const all = [...nvArr, ...dtArr];
+  // Update summary
+  const summary = document.getElementById('gh-nvSummary');
+  if (summary) {
+    if (all.length > 0) {
+      summary.style.display = 'block';
+      summary.innerHTML = '✅ Đã chọn: ' + all.join(' + ');
+    } else {
+      summary.style.display = 'none';
+    }
+  }
+  return all.join(', ');
 }
 
 async function openGiaoHangModal(maDH, btn) {
@@ -1886,6 +1901,10 @@ async function openGiaoHangModal(maDH, btn) {
     // Reset NV
     document.querySelectorAll('#gh-nvList input[type=checkbox]').forEach(c=>c.checked=false);
     document.querySelectorAll('#gh-doiTacList input[type=text]').forEach(c=>c.value='');
+    const sum = document.getElementById('gh-nvSummary');
+    if (sum) { sum.style.display='none'; sum.textContent=''; }
+    const sum = document.getElementById('gh-nvSummary');
+    if (sum) { sum.style.display='none'; sum.textContent=''; }
     // Set datetime
     const now = new Date();
     now.setMinutes(now.getMinutes()-now.getTimezoneOffset());
