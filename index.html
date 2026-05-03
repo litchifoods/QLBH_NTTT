@@ -660,7 +660,7 @@ tbody td{padding:10px 12px;vertical-align:middle}
               </div>
               <div class="form-group" style="position:relative">
                 <label>Số điện thoại *</label>
-                <input id="o-sdt" placeholder="0912345678" autocomplete="off" oninput="searchKHBySdt(this.value)">
+                <input id="o-sdt" type="tel" inputmode="numeric" placeholder="0912345678" autocomplete="off" oninput="searchKHBySdt(this.value)" onblur="normalizeSdtField(this)">
                 <div id="kh-suggest-sdt" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--blue);border-radius:0 0 8px 8px;z-index:999;max-height:180px;overflow-y:auto;box-shadow:var(--shadow)"></div>
               </div>
               <div class="form-group span-2"><label>Địa chỉ giao hàng</label><input id="o-diaChi" placeholder="Số nhà, đường, quận/huyện, tỉnh/thành"></div>
@@ -771,6 +771,136 @@ tbody td{padding:10px 12px;vertical-align:middle}
       <button class="btn btn-ghost" onclick="closeModal('deliveryDetailModal')">Đóng</button>
       <button class="btn btn-danger btn-sm" onclick="openCancelOrderModal()">🚫 Hủy đơn</button>
       <button class="btn btn-primary" onclick="openCreatePhieuGiao()">🚚 Tạo phiếu giao hàng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: GIAO HÀNG (đơn giản - chọn SP + người giao) -->
+<div class="modal-overlay" id="giaoHangSimpleModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 id="ghSimpleTitle">🚚 Giao hàng</h3>
+      <button class="modal-close" onclick="closeModal('giaoHangSimpleModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="ghSimpleInfo" style="background:var(--gray-50);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px"></div>
+      <!-- Chọn sản phẩm giao -->
+      <div class="form-section">
+        <div class="form-section-title">📦 Chọn sản phẩm giao đợt này</div>
+        <div style="margin-bottom:8px">
+          <label style="font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px">
+            <input type="checkbox" id="ghChkAll" onchange="toggleAllGHSP(this)"> <strong>Chọn tất cả</strong>
+          </label>
+        </div>
+        <div id="ghSpList"></div>
+      </div>
+      <!-- Ngày giờ giao -->
+      <div class="form-grid" style="margin-bottom:14px">
+        <div class="form-group">
+          <label>Ngày & Giờ giao *</label>
+          <input type="datetime-local" id="gh-ngayGiao">
+        </div>
+        <div class="form-group">
+          <label>Hình thức vận chuyển</label>
+          <select id="gh-hinhThuc">
+            <option value="🏠 Cửa hàng tự vận chuyển">🏠 Cửa hàng tự vận chuyển</option>
+            <option value="🤝 Thuê đối tác vận chuyển">🤝 Thuê đối tác vận chuyển</option>
+          </select>
+        </div>
+      </div>
+      <!-- Nhân viên cửa hàng -->
+      <div class="form-section">
+        <div class="form-section-title">👤 Nhân viên cửa hàng tham gia giao/lắp đặt</div>
+        <div id="gh-nvList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+          <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:5px 12px;background:#fff;border-radius:20px;border:1.5px solid var(--gray-200)">
+            <input type="checkbox" value="Admin"> Admin - Chủ CH</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:5px 12px;background:#fff;border-radius:20px;border:1.5px solid var(--gray-200)">
+            <input type="checkbox" value="Nguyễn Văn Tuấn"> Nguyễn Văn Tuấn</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:5px 12px;background:#fff;border-radius:20px;border:1.5px solid var(--gray-200)">
+            <input type="checkbox" value="Trần Thị Mai"> Trần Thị Mai</label>
+        </div>
+      </div>
+      <!-- Đối tác thuê ngoài -->
+      <div class="form-section">
+        <div class="form-section-title">🤝 Đối tác / CTV thuê ngoài <span style="font-size:11px;font-weight:400;color:var(--gray-400)">(nếu có)</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px" id="gh-doiTacList">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input placeholder="Tên đối tác / CTV 1" style="flex:1;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:13px;font-family:inherit">
+            <button class="btn btn-ghost btn-sm" onclick="addDoiTacRow()" style="white-space:nowrap">+ Thêm người</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Ghi chú (tầng, yêu cầu đặc biệt...)</label>
+        <input id="gh-ghiChu" placeholder="Giao tầng 3, lắp đặt cần 3 người...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('giaoHangSimpleModal')">Hủy</button>
+      <button class="btn btn-primary" onclick="saveGiaoHangSimple()">💾 Lưu giao hàng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: ĐỐI SOÁT (chi phí + tiền) -->
+<div class="modal-overlay" id="doiSoatModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 id="dsTitle">💰 Đối soát đơn hàng</h3>
+      <button class="modal-close" onclick="closeModal('doiSoatModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="dsInfo" style="background:var(--gray-50);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px"></div>
+      <!-- SP đã giao -->
+      <div class="form-section">
+        <div class="form-section-title">📦 Sản phẩm đã giao</div>
+        <div id="dsSpInfo" style="font-size:13px;color:var(--gray-600)">Đang tải...</div>
+      </div>
+      <!-- Người giao -->
+      <div class="form-section">
+        <div class="form-section-title">👤 Người vận chuyển / lắp đặt</div>
+        <div id="dsNVInfo" style="font-size:13px;color:var(--gray-600)">Đang tải...</div>
+      </div>
+      <!-- Chi phí -->
+      <div class="form-section">
+        <div class="form-section-title">💰 Chi phí vận chuyển & lắp đặt</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Phí vận chuyển (đ)</label><input type="number" id="ds-phiVC" value="0" min="0"></div>
+          <div class="form-group"><label>Phí lắp đặt (đ)</label><input type="number" id="ds-phiLD" value="0" min="0"></div>
+          <div class="form-group"><label>Chi phí trả NV/đối tác VC (đ)</label><input type="number" id="ds-chiPhiVC" value="0" min="0"></div>
+          <div class="form-group"><label>Chi phí trả NV/đối tác lắp đặt (đ)</label><input type="number" id="ds-chiPhiLD" value="0" min="0"></div>
+        </div>
+      </div>
+      <!-- Tiền KH còn nợ -->
+      <div class="form-section" style="background:#FFFBEB;border-color:#FDE68A">
+        <div class="form-section-title">💳 Tiền khách hàng còn nợ: <span id="ds-conNoLabel" style="color:var(--red);font-weight:800">0đ</span></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>NV/Đối tác thu và trả lại cửa hàng (đ)</label>
+            <input type="number" id="ds-nvTraTien" value="0" min="0" oninput="calcDoiSoat()">
+          </div>
+          <div class="form-group">
+            <label>Khách chuyển khoản thẳng CỬA HÀNG (đ)</label>
+            <input type="number" id="ds-khachCK" value="0" min="0" oninput="calcDoiSoat()">
+          </div>
+          <div class="form-group">
+            <label>Khách đưa tiền mặt thẳng CỬA HÀNG (đ)</label>
+            <input type="number" id="ds-khachTM" value="0" min="0" oninput="calcDoiSoat()">
+          </div>
+          <div class="form-group">
+            <label>Tổng đã thu</label>
+            <input type="text" id="ds-tongThu" value="0đ" readonly style="background:var(--gray-100);font-weight:700;color:var(--green)">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Ghi chú đối soát</label>
+        <input id="ds-ghiChu" placeholder="Ghi chú chi tiết...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('doiSoatModal')">Hủy</button>
+      <button class="btn btn-primary" style="background:var(--purple)" onclick="saveDoiSoat()">💰 Lưu đối soát</button>
     </div>
   </div>
 </div>
@@ -1320,19 +1450,38 @@ async function loadOrders(forceRefresh=false) {
   try {
     const cached = !forceRefresh && getCache('orders');
     const res = cached || await api('GET', { action:'getDonHang' });
-    if (!cached) setCache('orders', res);
-    // Đảo ngược: mới nhất lên đầu
-    allOrders = (res.data || []).slice().reverse();
-    renderOrders(allOrders);
-    // Phân trang
-    renderPagination('orderPagination', allOrders.length, _orderPage, (p)=>{ _orderPage=p; renderOrderPage(); });
+    if (!cached) setCache('orders', res, 120); // cache 2 phút
+    // Đơn mới nhất lên đầu (server đã sắp xếp mới nhất trước)
+    allOrders = (res.data || []);
+    _orderPage = 1;
+    renderOrdersPage();
   } catch(e) { console.error(e); }
 }
 let _orderPage = 1;
 const PAGE_SIZE = 25;
-function renderOrderPage() {
+let _filteredOrders = null; // lưu kết quả filter hiện tại
+
+function renderOrdersPage() {
+  const data = _filteredOrders || allOrders;
+  const total = data.length;
   const start = (_orderPage-1)*PAGE_SIZE;
-  renderOrders(allOrders.slice(start, start+PAGE_SIZE));
+  renderOrders(data.slice(start, start+PAGE_SIZE));
+  // Render pagination
+  const pg = document.getElementById('orderPagination');
+  if (pg) {
+    if (total <= PAGE_SIZE) {
+      pg.innerHTML = `<span style="font-size:12px;color:var(--gray-400)">Tổng: ${total} bản ghi</span>`;
+    } else {
+      const totalPages = Math.ceil(total/PAGE_SIZE);
+      let btns = `<span style="font-size:12px;color:var(--gray-400);margin-right:8px">Tổng: ${total} | Trang ${_orderPage}/${totalPages}</span>`;
+      if (_orderPage > 1) btns += `<button class="btn btn-ghost btn-sm" onclick="_orderPage--;renderOrdersPage()">‹</button>`;
+      for (let i=Math.max(1,_orderPage-2); i<=Math.min(totalPages,_orderPage+2); i++) {
+        btns += `<button class="btn btn-sm ${i===_orderPage?'btn-primary':'btn-ghost'}" onclick="_orderPage=${i};renderOrdersPage()">${i}</button>`;
+      }
+      if (_orderPage < totalPages) btns += `<button class="btn btn-ghost btn-sm" onclick="_orderPage++;renderOrdersPage()">›</button>`;
+      pg.innerHTML = btns;
+    }
+  }
 }
 
 function renderOrders(data) {
@@ -1342,10 +1491,10 @@ function renderOrders(data) {
     const conNo = parseFloat(r['Công Nợ']) || 0;
     const trangThai = r['Trạng Thái'] || '';
     const isLate = r._treHan;
-    // Sản phẩm: hiện SP đầu tiên + tổng số
+    // Sản phẩm: hiện SP đầu tiên + tổng số thực tế
     const spRaw = r['Chi tiết SP'] || '';
-    const spParts = spRaw.split(',');
-    const spFirst = spParts[0]?.trim() || '--';
+    const spParts = spRaw.split(',').map(s=>s.trim()).filter(Boolean);
+    const spFirst = spParts[0] || '--';
     const spCount = spParts.length;
     const spLabel = spFirst + (spCount > 1 ? ` <span style="color:var(--blue);font-size:11px;font-weight:700">+${spCount-1} SP</span>` : '');
     // Ngày giao - dùng fDate() để loại bỏ ký tự thừa T, 000Z
@@ -1377,18 +1526,12 @@ function renderOrders(data) {
 function filterOrders() {
   const q = document.getElementById('orderSearch').value.toLowerCase();
   const st = document.getElementById('orderStatus').value;
-  const filtered = allOrders.filter(r =>
+  _filteredOrders = (q || st !== 'all') ? allOrders.filter(r =>
     (!q || [r['Mã ĐH'],r['Tên Khách Hàng'],r['SĐT'],r['Nhân Viên']].join(' ').toLowerCase().includes(q)) &&
     (st==='all' || String(r['Trạng Thái']) === st)
-  );
+  ) : null;
   _orderPage = 1;
-  const start = 0;
-  renderOrders(filtered.slice(start, PAGE_SIZE));
-  renderPagination('orderPagination', filtered.length, 1, (p)=>{
-    _orderPage=p;
-    renderOrders(filtered.slice((p-1)*PAGE_SIZE, p*PAGE_SIZE));
-    renderPagination('orderPagination', filtered.length, p, arguments.callee);
-  });
+  renderOrdersPage();
 }
 
 let _editingOrderId = null;
@@ -1539,8 +1682,11 @@ Cần đặt NCC sau khi tạo đơn. Tiếp tục?`)) return;
   let trangThai = 'Chưa giao';
   if (loaiGiao === 'tumanghang') trangThai = 'Hoàn thành';
   else if (coHetHang && cart.some(c => !c.hetHang)) trangThai = 'Đã giao 1 phần';
-  // Đảm bảo SĐT giữ số 0 đầu - xử lý triệt để
-  const sdtFinal = fixSdt(sdt);
+  // Đảm bảo SĐT giữ số 0 đầu - buộc thêm số 0 nếu thiếu
+  let sdtFinal = String(sdt).replace(/\s/g,'');
+  if (sdtFinal && !sdtFinal.startsWith('0') && sdtFinal.length <= 10) {
+    sdtFinal = '0' + sdtFinal;
+  }
   const body = {
     action: _editingOrderId ? 'updateDonHang' : 'createDonHang',
     maDH: _editingOrderId,
@@ -1588,12 +1734,12 @@ let _currentDelivOrder = null; // đơn hàng đang xem
 let _selectedSPs = [];         // SP được chọn giao
 let _currentGHId = null;       // mã GH đang cập nhật
 
-async function loadDelivery() {
+async function loadDelivery(forceRefresh=false) {
   try {
     // Load đơn hàng chưa hoàn thành (Chưa giao + Đã giao 1 phần)
     const [resDon, resGH] = await Promise.all([
-      api('GET', { action:'getDonHang' }),
-      api('GET', { action:'getGiaoHang' })
+      ((!forceRefresh && getCache('orders')) ? Promise.resolve(getCache('orders')) : api('GET', { action:'getDonHang' }).then(r=>{ setCache('orders',r,120); return r; })),
+      ((!forceRefresh && getCache('giaoHang')) ? Promise.resolve(getCache('giaoHang')) : api('GET', { action:'getGiaoHang' }).then(r=>{ setCache('giaoHang',r,120); return r; }))
     ]);
     const donHang = (resDon.data || []).filter(r =>
       !String(r['Trạng Thái']).includes('Hoàn thành') &&
@@ -1661,8 +1807,11 @@ function renderDelivery(data) {
       <td style="text-align:right;font-size:12px">${r._phiLapDat>0?fVND(r._phiLapDat):'--'}</td>
       <td>
         <div style="display:flex;gap:4px;flex-wrap:wrap">
-          <button class="btn btn-primary btn-sm" id="btnGH_${r['Mã ĐH']}" onclick="openDeliveryDetailWithLoad('${r['Mã ĐH']}',this)">🚚 Giao hàng & đối soát</button>
-          <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="openCancelFromTable('${r['Mã ĐH']}')">🚫</button>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <button class="btn btn-primary btn-sm" style="background:var(--blue)" onclick="openGiaoHangModal('${r['Mã ĐH']}',this)">🚚 Giao hàng</button>
+            <button class="btn btn-outline btn-sm" style="color:var(--purple);border-color:var(--purple)" onclick="openDoiSoatModal('${r['Mã ĐH']}',this)">💰 Đối soát</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--red);font-size:11px;padding:3px 8px" onclick="openCancelFromTable('${r['Mã ĐH']}')">🚫 Hủy đơn</button>
+          </div>
         </div>
       </td>
     </tr>`;
@@ -1677,6 +1826,173 @@ function filterDelivery() {
     (st==='all' || r._trangThaiGiao === st)
   );
   renderDelivery(data);
+}
+
+// ─── GIAO HÀNG ĐƠN GIẢN ──────────────────────────────────────
+let _ghOrderId = null, _dsOrderId = null, _dsGHId = null;
+
+function addDoiTacRow() {
+  const list = document.getElementById('gh-doiTacList');
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;gap:8px;align-items:center';
+  div.innerHTML = `<input placeholder="Tên đối tác / CTV" style="flex:1;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:13px;font-family:inherit">
+    <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="this.parentElement.remove()">✕</button>`;
+  list.appendChild(div);
+}
+
+function toggleAllGHSP(chk) {
+  document.querySelectorAll('#ghSpList input[type=checkbox]').forEach(c => c.checked = chk.checked);
+}
+
+function getSelectedGHSP() {
+  return [...document.querySelectorAll('#ghSpList input[type=checkbox]:checked')].map(c=>c.value);
+}
+
+function getSelectedGHNV() {
+  const nvArr = [...document.querySelectorAll('#gh-nvList input[type=checkbox]:checked')].map(c=>c.value);
+  const dtArr = [...document.querySelectorAll('#gh-doiTacList input[type=text]')].map(c=>c.value.trim()).filter(Boolean);
+  return [...nvArr, ...dtArr].join(', ');
+}
+
+async function openGiaoHangModal(maDH, btn) {
+  const origTxt = btn ? btn.innerHTML : '';
+  if (btn) { btn.innerHTML='⏳ Đang tải...'; btn.disabled=true; }
+  try {
+    const order = allDeliveries.find(r=>r['Mã ĐH']===maDH);
+    _ghOrderId = maDH;
+    document.getElementById('ghSimpleTitle').textContent = `🚚 Giao hàng — ${maDH}`;
+    document.getElementById('ghSimpleInfo').innerHTML = order ? `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div><strong>Khách:</strong> ${order['Tên Khách Hàng']} — ${order['SĐT']||''}</div>
+        <div><strong>Địa chỉ:</strong> ${order['Địa Chỉ Giao']||'--'}</div>
+        <div><strong>Ngày giao HH:</strong> ${fDate(order['Ngày Giao HH'])}</div>
+        <div><strong>Còn nợ:</strong> <span style="color:var(--red);font-weight:700">${fVND(order['Công Nợ'])}</span></div>
+      </div>` : `Mã ĐH: ${maDH}`;
+    // Load SP
+    const spRes = await api('GET', { action:'getChiTietDon', maDH });
+    const spList = spRes.data || [];
+    const spRaw = order ? (order['Chi tiết SP']||'').split(',').map(s=>s.trim()).filter(Boolean) : [];
+    const items = spList.length > 0 ? spList.map((sp,i) => ({
+      ten: sp['Tên Sản Phẩm']||sp['Tên SP']||'', sl: sp['Số Lượng']||sp['SL']||1
+    })) : spRaw.map(s=>({ten:s, sl:1}));
+    document.getElementById('ghSpList').innerHTML = items.length ? items.map((sp,i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${i%2?'var(--gray-50)':'#fff'};border-radius:6px;margin-bottom:4px;border:1px solid var(--gray-100)">
+        <input type="checkbox" value="${sp.ten}" checked onchange="document.getElementById('ghChkAll').checked=[...document.querySelectorAll('#ghSpList input[type=checkbox]')].every(c=>c.checked)">
+        <div style="flex:1;font-size:13px;font-weight:500">${sp.ten}</div>
+        <div style="font-size:12px;color:var(--gray-400)">SL: ${sp.sl}</div>
+      </div>`).join('') : '<div style="color:var(--gray-400);font-size:13px;padding:8px">Chưa có chi tiết SP</div>';
+    // Set all checked
+    document.getElementById('ghChkAll').checked = true;
+    // Reset NV
+    document.querySelectorAll('#gh-nvList input[type=checkbox]').forEach(c=>c.checked=false);
+    document.querySelectorAll('#gh-doiTacList input[type=text]').forEach(c=>c.value='');
+    // Set datetime
+    const now = new Date();
+    now.setMinutes(now.getMinutes()-now.getTimezoneOffset());
+    document.getElementById('gh-ngayGiao').value = now.toISOString().slice(0,16);
+    document.getElementById('gh-ghiChu').value = '';
+    openModal('giaoHangSimpleModal');
+  } catch(e) { showToast('Lỗi tải dữ liệu: '+e.message,'error'); }
+  finally { if(btn){btn.innerHTML=origTxt;btn.disabled=false;} }
+}
+
+async function saveGiaoHangSimple() {
+  const spGiao = getSelectedGHSP();
+  if (!spGiao.length) { showToast('Vui lòng chọn ít nhất 1 sản phẩm!','error'); return; }
+  const nvGiao = getSelectedGHNV();
+  if (!nvGiao) { showToast('Vui lòng chọn nhân viên hoặc đối tác giao hàng!','error'); return; }
+  try {
+    await api('POST', {
+      action:'createGiaoHang', maDH:_ghOrderId,
+      dot:'Đợt 1/1',
+      tenKH: allDeliveries.find(r=>r['Mã ĐH']===_ghOrderId)?.['Tên Khách Hàng']||'',
+      diaChi: allDeliveries.find(r=>r['Mã ĐH']===_ghOrderId)?.['Địa Chỉ Giao']||'',
+      ngayGiao: document.getElementById('gh-ngayGiao').value,
+      hinhThuc: document.getElementById('gh-hinhThuc').value,
+      dvNvGiao: nvGiao,
+      spGiao: spGiao.join(', '),
+      phiVC:0, phiLapDat:0,
+      tienConNo: parseFloat(allDeliveries.find(r=>r['Mã ĐH']===_ghOrderId)?.['Công Nợ']||0),
+      ghiChu: document.getElementById('gh-ghiChu').value,
+      trangThai:'Đang giao chưa đối soát'
+    });
+    showToast('✅ Đã tạo lịch giao hàng! Trạng thái → Đang giao','success');
+    closeModal('giaoHangSimpleModal');
+    clearCache('orders');
+    clearCache('giaoHang');
+    loadDelivery(true);
+  } catch(e){ showToast('Lỗi: '+e.message,'error'); }
+}
+
+// ─── ĐỐI SOÁT ────────────────────────────────────────────────
+function calcDoiSoat() {
+  const nvTra = parseInt(document.getElementById('ds-nvTraTien').value)||0;
+  const ck = parseInt(document.getElementById('ds-khachCK').value)||0;
+  const tm = parseInt(document.getElementById('ds-khachTM').value)||0;
+  document.getElementById('ds-tongThu').value = fVND(nvTra+ck+tm);
+}
+
+async function openDoiSoatModal(maDH, btn) {
+  const origTxt = btn ? btn.innerHTML : '';
+  if (btn) { btn.innerHTML='⏳ Đang tải...'; btn.disabled=true; }
+  try {
+    const order = allDeliveries.find(r=>r['Mã ĐH']===maDH);
+    _dsOrderId = maDH;
+    _dsGHId = order?._maGH || null;
+    document.getElementById('dsTitle').textContent = `💰 Đối soát — ${maDH}`;
+    const conNo = parseFloat(order?.['Công Nợ']||0);
+    document.getElementById('ds-conNoLabel').textContent = fVND(conNo);
+    document.getElementById('dsInfo').innerHTML = order ? `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div><strong>Đơn hàng:</strong> ${maDH}</div>
+        <div><strong>Khách:</strong> ${order['Tên Khách Hàng']}</div>
+        <div><strong>Trạng thái giao:</strong> ${order._trangThaiGiao||'--'}</div>
+        <div><strong>Còn nợ:</strong> <span style="color:var(--red);font-weight:700">${fVND(conNo)}</span></div>
+      </div>` : '';
+    // Hiện SP đã giao
+    const spRes = await api('GET',{action:'getChiTietDon',maDH});
+    const spList = spRes.data||[];
+    document.getElementById('dsSpInfo').innerHTML = spList.length ?
+      spList.map(sp=>`<div style="padding:4px 0;font-size:13px">• ${sp['Tên Sản Phẩm']||sp['Tên SP']||''} × ${sp['Số Lượng']||1}</div>`).join('') :
+      (order?.['Chi tiết SP']||'Chưa có dữ liệu chi tiết');
+    document.getElementById('dsNVInfo').textContent = order?._dvNvGiao || 'Chưa có thông tin NV giao';
+    // Reset
+    ['ds-phiVC','ds-phiLD','ds-chiPhiVC','ds-chiPhiLD','ds-nvTraTien','ds-khachCK','ds-khachTM'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.value=0;
+    });
+    document.getElementById('ds-tongThu').value='0đ';
+    document.getElementById('ds-ghiChu').value='';
+    openModal('doiSoatModal');
+  } catch(e){ showToast('Lỗi tải dữ liệu: '+e.message,'error'); }
+  finally { if(btn){btn.innerHTML=origTxt;btn.disabled=false;} }
+}
+
+async function saveDoiSoat() {
+  if (!_dsOrderId) return;
+  const tongThu = (parseInt(document.getElementById('ds-nvTraTien').value)||0)
+                + (parseInt(document.getElementById('ds-khachCK').value)||0)
+                + (parseInt(document.getElementById('ds-khachTM').value)||0);
+  try {
+    await api('POST', {
+      action:'updateGiaoHang',
+      maGH: _dsGHId,
+      maDH: _dsOrderId,
+      trangThai:'Đã đối soát',
+      nvTraTien: parseInt(document.getElementById('ds-nvTraTien').value)||0,
+      khachCK: parseInt(document.getElementById('ds-khachCK').value)||0,
+      khachTM: parseInt(document.getElementById('ds-khachTM').value)||0,
+      chiPhiNV: parseInt(document.getElementById('ds-chiPhiVC').value)||0,
+      chiPhiLD: parseInt(document.getElementById('ds-chiPhiLD').value)||0,
+      phiVC: parseInt(document.getElementById('ds-phiVC').value)||0,
+      phiLD: parseInt(document.getElementById('ds-phiLD').value)||0,
+      ghiChu: document.getElementById('ds-ghiChu').value
+    });
+    showToast('✅ Đối soát hoàn tất! Công nợ đã được cập nhật.','success');
+    closeModal('doiSoatModal');
+    clearCache('orders');
+    clearCache('giaoHang');
+    loadDelivery(true);
+  } catch(e){ showToast('Lỗi: '+e.message,'error'); }
 }
 
 // Wrapper với loading state để tránh bấm nhiều lần
@@ -2481,7 +2797,23 @@ function fVND(n) {
   return num.toLocaleString('vi-VN') + 'đ';
 }
 
+// Normalize SĐT field khi rời khỏi input
+function normalizeSdtField(input) {
+  const val = input.value.replace(/\D/g,'');
+  if (!val) return;
+  if (val.length === 9) input.value = '0' + val;
+  else if (val.length === 10 && !val.startsWith('0')) input.value = '0' + val;
+  else input.value = val.startsWith('0') ? val : '0' + val;
+}
+
 // Đảm bảo SĐT luôn có số 0 đầu
+function normalizeSdtField(input) {
+  const val = (input.value||'').replace(/[^0-9]/g,'');
+  if (!val) return;
+  if (!val.startsWith('0')) input.value = '0' + val;
+  else input.value = val;
+}
+
 function fixSdt(s) {
   const digits = String(s||'').replace(/\D/g,'');
   if (!digits) return s;
