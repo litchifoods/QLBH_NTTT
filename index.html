@@ -2826,12 +2826,7 @@ function normalizeSdtField(input) {
 }
 
 // Đảm bảo SĐT luôn có số 0 đầu
-function normalizeSdtField(input) {
-  const val = (input.value||'').replace(/[^0-9]/g,'');
-  if (!val) return;
-  if (!val.startsWith('0')) input.value = '0' + val;
-  else input.value = val;
-}
+
 
 function fixSdt(s) {
   const digits = String(s||'').replace(/\D/g,'');
@@ -3099,43 +3094,7 @@ async function deleteProduct(id) { if (!confirm(`Ẩn sản phẩm ${id}?`)) ret
 function editCustomer(id) { showToast('Sửa khách hàng — đang phát triển trong v1.1', 'info'); }
 function updateSOStatus(id) { showToast(`Cập nhật trạng thái ${id} — click để chuyển trạng thái tiếp theo`, 'info'); }
 function payImport(id) { showToast(`Thanh toán phiếu ${id} — đang phát triển trong v1.1`, 'info'); }
-function deleteExpense(id) { if (!confirm('Xóa chi phí này?')) return; showToast('Đã xóa chi phí', 'success'); loadExpenses(); }
-function updateNVLabel() {
-  const checked = [...document.querySelectorAll('#d-nvCheckList input[type=checkbox]:checked')].map(c=>c.value);
-  const extra = document.getElementById('d-nvExtra')?.value.trim();
-  if (extra) checked.push(extra);
-  const el = document.getElementById('d-nvSelected');
-  if (el) el.textContent = checked.length ? '✅ Đã chọn: ' + checked.join(', ') : '';
-}
-
-function getSelectedNV() {
-  const checked = [...document.querySelectorAll('#d-nvCheckList input[type=checkbox]:checked')].map(c=>c.value);
-  const extra = document.getElementById('d-nvExtra')?.value.trim();
-  if (extra) checked.push(extra);
-  return checked.join(', ');
-}
-
-function resetNVSelection() {
-  document.querySelectorAll('#d-nvCheckList input[type=checkbox]').forEach(c => c.checked=false);
-  const ex = document.getElementById('d-nvExtra');
-  if (ex) ex.value = '';
-  updateNVLabel();
-}
-
-function toggleDeliveryType() { const v = document.getElementById('d-hinhThuc').value; document.getElementById('d-dvLabel').textContent = v.includes('Tự') ? 'Nhân viên giao' : 'Đối tác vận chuyển'; }
-function searchCustomerAuto() {}
-
-// Đóng dropdown KH khi click ra ngoài
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('#o-tenKH') && !e.target.closest('#kh-suggest-name')) {
-    const el = document.getElementById('kh-suggest-name');
-    if (el) el.style.display='none';
-  }
-  if (!e.target.closest('#o-sdt') && !e.target.closest('#kh-suggest-sdt')) {
-    const el = document.getElementById('kh-suggest-sdt');
-    if (el) el.style.display='none';
-  }
-});
+function deleteExpense(id) { if (!confirm('Xóa chi phí này?')) return; showToast('Đã xóa chi phí', 'success'); loadExpenses(); });
 </script>
 </body>
 </html>
