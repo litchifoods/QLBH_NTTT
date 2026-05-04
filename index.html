@@ -1903,8 +1903,6 @@ async function openGiaoHangModal(maDH, btn) {
     document.querySelectorAll('#gh-doiTacList input[type=text]').forEach(c=>c.value='');
     const sum = document.getElementById('gh-nvSummary');
     if (sum) { sum.style.display='none'; sum.textContent=''; }
-    const sum = document.getElementById('gh-nvSummary');
-    if (sum) { sum.style.display='none'; sum.textContent=''; }
     // Set datetime
     const now = new Date();
     now.setMinutes(now.getMinutes()-now.getTimezoneOffset());
@@ -3094,7 +3092,7 @@ async function deleteProduct(id) { if (!confirm(`Ẩn sản phẩm ${id}?`)) ret
 function editCustomer(id) { showToast('Sửa khách hàng — đang phát triển trong v1.1', 'info'); }
 function updateSOStatus(id) { showToast(`Cập nhật trạng thái ${id} — click để chuyển trạng thái tiếp theo`, 'info'); }
 function payImport(id) { showToast(`Thanh toán phiếu ${id} — đang phát triển trong v1.1`, 'info'); }
-function deleteExpense(id) { if (!confirm('Xóa chi phí này?')) return; showToast('Đã xóa chi phí', 'success'); loadExpenses(); });
+function deleteExpense(id) { if (!confirm('Xóa chi phí này?')) return; showToast('Đã xóa chi phí', 'success'); loadExpenses(); }
 </script>
 </body>
 </html>
